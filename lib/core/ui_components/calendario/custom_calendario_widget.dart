@@ -158,13 +158,13 @@ class _CalendarioDiaWidget extends StatelessWidget {
 
     Color? corFundo() {
       if (isDiaSelecionado) return colorScheme.primary;
-      if (isHoje) return colorScheme.primary.withOpacity(0.3);
+      if (isHoje) return colorScheme.primary.withValues(alpha: 0.2);
       return null;
     }
 
     Color corTexto() {
       if (isDiaSelecionado) return colorScheme.onPrimary;
-      if (isHoje) return colorScheme.onPrimary;
+      if (isHoje) return colorScheme.primary;
       if (isMesAtual) return colorScheme.onSurface;
       return colorScheme.onSurface.withOpacity(0.3);
     }

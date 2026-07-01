@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Tarefas')),
-
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: TarefasPage(),
     );
   }
