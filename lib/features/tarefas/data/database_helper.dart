@@ -1,0 +1,26 @@
+import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+class DatabaseHelper {
+  static final DatabaseHelper instance = DatabaseHelper._internal();
+  static Database? _database;
+
+  DatabaseHelper._internal();
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDB();
+    return _database!;
+  }
+
+  Future<Database> _initDB() async {
+    final dbPath = await databaseFactory.getDatabasesPath();
+    print(dbPath);
+    final path = join(dbPath, 'tarefas.db');
+
+    return await databaseFactory.openDatabase(
+      path,
+      options: OpenDatabaseOptions(version: 1),
+    );
+  }
+}

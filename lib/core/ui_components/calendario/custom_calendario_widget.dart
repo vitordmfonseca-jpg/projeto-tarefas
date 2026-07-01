@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tarefas_calendario/core/extensions/ext_color.dart';
 import 'package:tarefas_calendario/core/extensions/ext_datetime.dart';
-import 'package:tarefas_calendario/core/theme/cor_padrao.dart';
 import 'package:tarefas_calendario/core/ui_components/calendario/custom_calendario_viewmodel.dart';
 
 class CustomCalendarioWidget extends StatefulWidget {
@@ -19,7 +17,6 @@ class CustomCalendarioWidget extends StatefulWidget {
 
 class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
   DateTime get _mesAtual => widget.mesAtual;
-
   final _viewModel = CustomCalendarioViewmodel();
 
   @override
@@ -32,11 +29,11 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final corPadrao = CorPadrao.corPrimaria;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       decoration: BoxDecoration(
-        color: corPadrao.shade200,
+        color: colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListenableBuilder(
@@ -45,11 +42,10 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
           spacing: 16.0,
           children: [
             Container(
-              padding: EdgeInsets.all(4.0),
+              padding: const EdgeInsets.all(4.0),
               decoration: BoxDecoration(
-                color: corPadrao,
-
-                borderRadius: BorderRadius.only(
+                color: colorScheme.primary,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
@@ -59,26 +55,22 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                 children: [
                   IconButton(
                     onPressed: () => _viewModel.mesAnterior(),
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: corPadrao.calculaCorSec(),
-                    ),
+                    icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
                   ),
                   Text(
                     '${_viewModel.mesAtual.formataMesPt().toUpperCase()} - ${_viewModel.mesAtual.year}',
-                    style: TextStyle(color: corPadrao.calculaCorSec()),
+                    style: TextStyle(color: colorScheme.onPrimary),
                   ),
                   IconButton(
                     onPressed: () => _viewModel.proxMes(),
                     icon: Icon(
                       Icons.arrow_forward,
-                      color: corPadrao.calculaCorSec(),
+                      color: colorScheme.onPrimary,
                     ),
                   ),
                 ],
               ),
             ),
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -90,7 +82,15 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                       children: [
                         ..._viewModel.diasSemana.map(
                           (e) => Expanded(
-                            child: Text(e, textAlign: TextAlign.center),
+                            child: Text(
+                              e,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: colorScheme.onSurface.withOpacity(0.6),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -105,7 +105,7 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                             final idxDiaSemana = (idxSemana * 7) + idxDia;
                             final dia = _viewModel.diasMes[idxDiaSemana];
 
-                            var isDiaSelecionado =
+                            final isDiaSelecionado =
                                 _viewModel.diaSelecionado?.isMesmoDia(dia) ??
                                 false;
 
@@ -120,8 +120,6 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                                   _viewModel.diaSelecionado = dia;
                                   widget.diaSelecionado(dia);
                                 },
-                                cor: corPadrao,
-                                corSelecionado: corPadrao.shade300,
                               ),
                             );
                           }),
@@ -142,8 +140,6 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
 class _CalendarioDiaWidget extends StatelessWidget {
   const _CalendarioDiaWidget({
     required this.dia,
-    required this.cor,
-    required this.corSelecionado,
     required this.isDiaSelecionado,
     required this.isMesAtual,
     required this.isHoje,
@@ -151,43 +147,43 @@ class _CalendarioDiaWidget extends StatelessWidget {
   });
 
   final DateTime dia;
-  final MaterialColor cor;
-  final Color corSelecionado;
   final bool isDiaSelecionado;
   final bool isMesAtual;
   final bool isHoje;
   final void Function() selecionaDia;
 
-  Color? _corCard() {
-    if (isDiaSelecionado) return corSelecionado;
-    if (isHoje) return cor.shade700;
-    return null;
-  }
-
-  Color? _corTexto() {
-    if (isDiaSelecionado) return cor.calculaCorSec();
-    if (isHoje) return cor.calculaCorSec();
-    if (isMesAtual) return Colors.grey.shade900;
-    return cor.shade300;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    Color? corFundo() {
+      if (isDiaSelecionado) return colorScheme.primary;
+      if (isHoje) return colorScheme.primary.withOpacity(0.3);
+      return null;
+    }
+
+    Color corTexto() {
+      if (isDiaSelecionado) return colorScheme.onPrimary;
+      if (isHoje) return colorScheme.onPrimary;
+      if (isMesAtual) return colorScheme.onSurface;
+      return colorScheme.onSurface.withOpacity(0.3);
+    }
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => selecionaDia(),
+        onTap: selecionaDia,
         borderRadius: BorderRadius.circular(15),
         child: Center(
           child: Container(
             decoration: BoxDecoration(
-              color: _corCard(),
+              color: corFundo(),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
               child: Text(
                 dia.day.toString(),
-                style: TextStyle(fontSize: 16.0, color: _corTexto()),
+                style: TextStyle(fontSize: 16.0, color: corTexto()),
               ),
             ),
           ),
