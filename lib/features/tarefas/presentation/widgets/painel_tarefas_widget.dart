@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/viewmodels/tarefas_viewmodel.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/dialog_adicionar_tarefa.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/tarefa_card_widget.dart';
@@ -24,30 +25,34 @@ class PainelTarefasWidget extends StatelessWidget {
     'Dezembro',
   ];
 
+  static const int _metaMinutosDia = 530; // 8h50m
+
   String _tituloDia(DateTime dia) {
     final nomeDia = _diasSemana[dia.weekday - 1];
     final nomeMes = _meses[dia.month - 1];
     return '$nomeDia, ${dia.day} de $nomeMes de ${dia.year}';
   }
 
-  Future<void> _adicionarTarefa(BuildContext context) async {
-    final tarefa = await showDialog(
+  Future<void> _abrirDialog(
+    BuildContext context, {
+    TarefaEntity? tarefaParaEditar,
+  }) async {
+    final tarefa = await showDialog<TarefaEntity>(
       context: context,
-      builder: (_) => DialogAdicionarTarefa(diaSelecionado: vm.diaSelecionado),
+      builder: (_) => DialogAdicionarTarefa(
+        diaSelecionado: vm.diaSelecionado,
+        tarefaParaEditar: tarefaParaEditar,
+      ),
     );
     if (tarefa != null) await vm.salvar(tarefa);
   }
 
-  Future<void> _deletarTarefa(
-    BuildContext context,
-    int id,
-    String titulo,
-  ) async {
+  Future<void> _deletarTarefa(BuildContext context, TarefaEntity tarefa) async {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Excluir tarefa'),
-        content: Text('Deseja excluir "$titulo"?'),
+        content: Text('Deseja excluir "${tarefa.titulo}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -63,136 +68,240 @@ class PainelTarefasWidget extends StatelessWidget {
         ],
       ),
     );
-    if (confirmar == true) await vm.deletar(id);
+    if (confirmar == true) await vm.deletar(tarefa.id!);
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ListenableBuilder(
       listenable: vm,
       builder: (context, _) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+        final progresso = (vm.totalMinutosDia / _metaMinutosDia).clamp(
+          0.0,
+          1.0,
+        );
+        final bateuMeta = vm.totalMinutosDia >= _metaMinutosDia;
+        final minutosRestantes = _metaMinutosDia - vm.totalMinutosDia;
+        final horasRest = minutosRestantes ~/ 60;
+        final minRest = minutosRestantes % 60;
+        final textoMeta = bateuMeta
+            ? 'Meta atingida!'
+            : 'Faltam ${horasRest > 0 ? '${horasRest}h ' : ''}${minRest}m';
+
+        return Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(10),
+            border: Border(
+              left: BorderSide(color: colorScheme.primary, width: 3),
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _tituloDia(vm.diaSelecionado),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _tituloDia(vm.diaSelecionado),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '${vm.tarefas.length} tarefas registradas',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        '${vm.tarefas.length} tarefas registradas',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                      if (vm.tarefas.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: colorScheme.primary.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                vm.totalFormatadoDia,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                              Text(
+                                'total do dia',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+                Divider(
+                  height: 1,
+                  color: colorScheme.outline.withValues(alpha: 0.1),
+                ),
+
+                // Lista
+                Expanded(
+                  child: vm.carregando
+                      ? const Center(child: CircularProgressIndicator())
+                      : vm.tarefas.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.assignment_outlined,
+                                size: 40,
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.2,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Nenhuma tarefa registrada\npara este dia',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          itemCount: vm.tarefas.length,
+                          itemBuilder: (_, i) => TarefaCardWidget(
+                            tarefa: vm.tarefas[i],
+                            onEditar: () => _abrirDialog(
+                              context,
+                              tarefaParaEditar: vm.tarefas[i],
+                            ),
+                            onDeletar: () =>
+                                _deletarTarefa(context, vm.tarefas[i]),
+                          ),
+                        ),
+                ),
+
+                // Rodapé
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      FilledButton.icon(
+                        onPressed: () => _abrirDialog(context),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Registrar Tarefa'),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: colorScheme.outline.withValues(alpha: 0.1),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Meta do dia',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  textoMeta,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: bateuMeta
+                                        ? Colors.green
+                                        : colorScheme.onSurface.withValues(
+                                            alpha: 0.7,
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(99),
+                              child: LinearProgressIndicator(
+                                value: progresso,
+                                backgroundColor: colorScheme.outline.withValues(
+                                  alpha: 0.15,
+                                ),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  bateuMeta
+                                      ? Colors.green
+                                      : colorScheme.primary,
+                                ),
+                                minHeight: 6,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  if (vm.tarefas.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primary.withOpacity(0.4),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            vm.totalFormatadoDia,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          Text(
-                            'total do dia',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withOpacity(0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            const Divider(height: 1),
-
-            // Lista
-            Expanded(
-              child: vm.carregando
-                  ? const Center(child: CircularProgressIndicator())
-                  : vm.tarefas.isEmpty
-                  ? const Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.assignment_outlined,
-                            size: 40,
-                            color: Colors.white38,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Nenhuma tarefa registrada\npara este dia',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white54),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: vm.tarefas.length,
-                      itemBuilder: (_, i) => TarefaCardWidget(
-                        tarefa: vm.tarefas[i],
-                        onDeletar: () => _deletarTarefa(
-                          context,
-                          vm.tarefas[i].id!,
-                          vm.tarefas[i].titulo,
-                        ),
-                      ),
-                    ),
-            ),
-
-            // Botão adicionar
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: FilledButton.icon(
-                onPressed: () => _adicionarTarefa(context),
-                icon: const Icon(Icons.add),
-                label: const Text('Registrar Tarefa'),
-              ),
-            ),
-          ],
+          ),
         );
       },
     );

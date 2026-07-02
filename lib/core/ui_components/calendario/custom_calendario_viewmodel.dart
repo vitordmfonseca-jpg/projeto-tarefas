@@ -26,25 +26,22 @@ class CustomCalendarioViewmodel extends ChangeNotifier {
     diasDoMes(_mesAtual);
   }
 
+  // Volta para o mês e dia atual
+  void irParaHoje() {
+    final hoje = DateTime.now();
+    _diaSelecionado = hoje;
+    diasDoMes(hoje);
+  }
+
   void diasDoMes(DateTime mesAtual) {
-    //Salva o mes inicial
     _mesAtual = mesAtual;
-
-    //Obtem o primeiro dia do mes
     final primeiroDia = DateTime(mesAtual.year, mesAtual.month, 1);
-
-    //Obtem o dia da semana do primeiro dia do mes
     final diaSemana = primeiroDia.weekday;
-
-    //Obtem o espaço em branco antes do primeiro dia do mes
     final espacoDia = diaSemana - 1;
 
     _diasMes = [];
-
-    //Usei o calendario do windows como base, que tem 6 semanas com 7 dias cada = 42 quadrados
     for (var i = 0; i < 42; i++) {
       final dia = i - espacoDia + 1;
-
       _diasMes.add(DateTime(mesAtual.year, mesAtual.month, dia));
     }
 

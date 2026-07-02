@@ -61,12 +61,27 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                     '${_viewModel.mesAtual.formataMesPt().toUpperCase()} - ${_viewModel.mesAtual.year}',
                     style: TextStyle(color: colorScheme.onPrimary),
                   ),
-                  IconButton(
-                    onPressed: () => _viewModel.proxMes(),
-                    icon: Icon(
-                      Icons.arrow_forward,
-                      color: colorScheme.onPrimary,
-                    ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          _viewModel.irParaHoje();
+                          widget.diaSelecionado(DateTime.now());
+                        },
+                        icon: Icon(
+                          Icons.today_outlined,
+                          color: colorScheme.onPrimary,
+                        ),
+                        tooltip: 'Hoje',
+                      ),
+                      IconButton(
+                        onPressed: () => _viewModel.proxMes(),
+                        icon: Icon(
+                          Icons.arrow_forward,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -158,13 +173,13 @@ class _CalendarioDiaWidget extends StatelessWidget {
 
     Color? corFundo() {
       if (isDiaSelecionado) return colorScheme.primary;
-      if (isHoje) return colorScheme.primary.withValues(alpha: 0.2);
+      if (isHoje) return colorScheme.primary.withOpacity(0.3);
       return null;
     }
 
     Color corTexto() {
       if (isDiaSelecionado) return colorScheme.onPrimary;
-      if (isHoje) return colorScheme.primary;
+      if (isHoje) return colorScheme.onPrimary;
       if (isMesAtual) return colorScheme.onSurface;
       return colorScheme.onSurface.withOpacity(0.3);
     }

@@ -4,11 +4,13 @@ import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entit
 class TarefaCardWidget extends StatelessWidget {
   final TarefaEntity tarefa;
   final VoidCallback onDeletar;
+  final VoidCallback onEditar;
 
   const TarefaCardWidget({
     super.key,
     required this.tarefa,
     required this.onDeletar,
+    required this.onEditar,
   });
 
   String get _tempoFormatado {
@@ -23,61 +25,53 @@ class TarefaCardWidget extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: InkWell(
+        onTap: onEditar,
+        borderRadius: BorderRadius.circular(16),
+        child: ListTile(
+          leading: SizedBox(
+            width: 64,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color: colorScheme.primary.withOpacity(0.12),
+                color: colorScheme.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorScheme.primary.withOpacity(0.4)),
+                border: Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.4),
+                ),
               ),
               child: Text(
                 _tempoFormatado,
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: colorScheme.primary,
                 ),
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tarefa.titulo,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+          ),
+          title: Text(
+            tarefa.titulo,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+          subtitle: tarefa.descricao != null && tarefa.descricao!.isNotEmpty
+              ? Text(
+                  tarefa.descricao!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
-                  if (tarefa.descricao != null && tarefa.descricao!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: Text(
-                        tarefa.descricao!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline, size: 18),
-              color: colorScheme.error,
-              onPressed: onDeletar,
-              tooltip: 'Excluir tarefa',
-            ),
-          ],
+                )
+              : null,
+          trailing: IconButton(
+            icon: const Icon(Icons.delete_outline, size: 18),
+            color: colorScheme.error,
+            onPressed: onDeletar,
+            tooltip: 'Excluir tarefa',
+          ),
         ),
       ),
     );

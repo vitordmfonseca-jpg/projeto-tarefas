@@ -18,13 +18,13 @@ class DialogAdicionarTarefaViewModel extends ChangeNotifier {
     final horasInt = int.tryParse(horas.isEmpty ? '0' : horas);
     final minutosInt = int.tryParse(minutos.isEmpty ? '0' : minutos);
 
-    if (horasInt == null) {
+    if (horasInt == null || horasInt < 0) {
       erro = 'Informe um valor válido para horas';
       notifyListeners();
       return false;
     }
 
-    if (minutosInt == null || minutosInt > 59) {
+    if (minutosInt == null || minutosInt < 0 || minutosInt > 59) {
       erro = 'Minutos deve ser entre 0 e 59';
       notifyListeners();
       return false;
@@ -47,13 +47,15 @@ class DialogAdicionarTarefaViewModel extends ChangeNotifier {
     required String horas,
     required String minutos,
     required DateTime dia,
+    int? id,
   }) {
     return TarefaEntity(
+      id: id,
       titulo: titulo.trim(),
       descricao: descricao.trim().isEmpty ? null : descricao.trim(),
       data: dia,
-      horasGastas: int.parse(horas.isEmpty ? '0' : horas),
-      minutosGastos: int.parse(minutos.isEmpty ? '0' : minutos),
+      horasGastas: int.tryParse(horas) ?? 0,
+      minutosGastos: int.tryParse(minutos) ?? 0,
     );
   }
 }
