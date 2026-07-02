@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/core/extensions/ext_datetime.dart';
+import 'package:tarefas_calendario/core/theme/app_gradient.dart';
 import 'package:tarefas_calendario/core/ui_components/calendario/custom_calendario_viewmodel.dart';
 
 class CustomCalendarioWidget extends StatefulWidget {
@@ -44,7 +45,9 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
             Container(
               padding: const EdgeInsets.all(4.0),
               decoration: BoxDecoration(
-                color: colorScheme.primary,
+                gradient: Theme.of(
+                  context,
+                ).extension<AppGradient>()!.headerGradient,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),

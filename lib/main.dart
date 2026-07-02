@@ -6,17 +6,18 @@ import 'package:tarefas_calendario/features/home/presentation/home_page.dart';
 import 'package:window_manager/window_manager.dart'
     show WindowOptions, windowManager;
 
+final temaNotifier = ValueNotifier<ThemeMode>(ThemeMode.dark);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializa o sqflite para desktop (Windows/Linux/macOS)
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = WindowOptions(
-    minimumSize: const Size(1024, 576),
+  const windowOptions = WindowOptions(
+    minimumSize: Size(1024, 576),
     center: true,
     title: 'Calendário de Tarefas',
   );
@@ -28,16 +29,21 @@ void main() async {
   });
 
   runApp(
-    MaterialApp(
-      home: HomePage(),
-      debugShowCheckedModeBanner: false,
-      supportedLocales: const [Locale('pt', 'BR')],
-      theme: AppTheme.darkTheme,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+    ValueListenableBuilder<ThemeMode>(
+      valueListenable: temaNotifier,
+      builder: (_, modo, __) => MaterialApp(
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: modo,
+        debugShowCheckedModeBanner: false,
+        supportedLocales: const [Locale('pt', 'BR')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: HomePage(temaNotifier: temaNotifier),
+      ),
     ),
   );
 }
