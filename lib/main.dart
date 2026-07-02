@@ -31,7 +31,7 @@ void main() async {
   runApp(
     ValueListenableBuilder<ThemeMode>(
       valueListenable: temaNotifier,
-      builder: (_, modo, __) => MaterialApp(
+      builder: (_, modo, _) => MaterialApp(
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: modo,

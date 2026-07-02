@@ -20,16 +20,19 @@ class HomePage extends StatelessWidget {
         actions: [
           ValueListenableBuilder<ThemeMode>(
             valueListenable: temaNotifier,
-            builder: (_, modo, __) => IconButton(
-              tooltip: modo == ThemeMode.dark ? 'Modo claro' : 'Modo escuro',
-              icon: Icon(
-                modo == ThemeMode.dark
-                    ? Icons.light_mode_outlined
-                    : Icons.dark_mode_outlined,
+            builder: (_, modo, __) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: IconButton(
+                tooltip: modo == ThemeMode.dark ? 'Modo claro' : 'Modo escuro',
+                icon: Icon(
+                  modo == ThemeMode.dark
+                      ? Icons.light_mode_outlined
+                      : Icons.dark_mode_outlined,
+                ),
+                onPressed: () => temaNotifier.value = modo == ThemeMode.dark
+                    ? ThemeMode.light
+                    : ThemeMode.dark,
               ),
-              onPressed: () => temaNotifier.value = modo == ThemeMode.dark
-                  ? ThemeMode.light
-                  : ThemeMode.dark,
             ),
           ),
         ],
