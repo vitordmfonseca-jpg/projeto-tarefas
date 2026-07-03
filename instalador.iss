@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "Gerenciador de tarefas"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "Vitor Daniel Matos Fonseca"
 #define MyAppURL "https://www.example.com/"
 #define MyAppExeName "tarefas_calendario.exe"
