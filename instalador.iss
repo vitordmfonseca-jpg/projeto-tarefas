@@ -36,6 +36,7 @@ OutputDir=C:\Users\Pichau\Documents\Releases
 OutputBaseFilename=inst_gerencia_tarefas
 SolidCompression=yes
 WizardStyle=modern dynamic
+SetupIconFile=icone.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
