@@ -51,9 +51,13 @@ class TarefaCardWidget extends StatelessWidget {
               ),
             ),
           ),
-          title: Text(
-            tarefa.titulo,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          title: Tooltip(
+            message: tarefa.titulo,
+            child: Text(
+              tarefa.titulo,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
           ),
           subtitle: tarefa.descricao != null && tarefa.descricao!.isNotEmpty
               ? Text(

@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "Gerenciador de tarefas"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "Vitor Daniel Matos Fonseca"
 #define MyAppURL "https://www.example.com/"
 #define MyAppExeName "tarefas_calendario.exe"
@@ -32,7 +32,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\Pichau\Desktop
+OutputDir=C:\Users\Pichau\Documents\Releases
 OutputBaseFilename=inst_gerencia_tarefas
 SolidCompression=yes
 WizardStyle=modern dynamic
