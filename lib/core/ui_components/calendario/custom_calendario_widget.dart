@@ -56,9 +56,15 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    onPressed: () => _viewModel.mesAnterior(),
-                    icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 32.0),
+                    child: IconButton(
+                      onPressed: () => _viewModel.mesAnterior(),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
                   Text(
                     '${_viewModel.mesAtual.formataMesPt().toUpperCase()} - ${_viewModel.mesAtual.year}',

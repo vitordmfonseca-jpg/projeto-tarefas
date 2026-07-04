@@ -15,6 +15,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _indiceSelecionado = 0;
+  bool _sidebarExpandida = false;
+
+  static const double _larguraSidebarRecolhida = 64.0;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +25,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      body: Row(
+      body: Stack(
         children: [
-          SidebarWidget(
-            indiceSelecionado: _indiceSelecionado,
-            onItemSelecionado: (i) => setState(() => _indiceSelecionado = i),
-          ),
-          Expanded(
+          Positioned.fill(
+            left: _larguraSidebarRecolhida,
             child: IndexedStack(
               index: _indiceSelecionado,
               children: [
@@ -36,6 +36,27 @@ class _HomePageState extends State<HomePage> {
                 const TimesheetPage(),
                 ConfiguracoesPage(temaNotifier: widget.temaNotifier),
               ],
+            ),
+          ),
+
+          Positioned.fill(
+            left: _larguraSidebarRecolhida,
+            child: IgnorePointer(
+              child: AnimatedOpacity(
+                opacity: _sidebarExpandida ? 0.3 : 0.0,
+                duration: const Duration(milliseconds: 200),
+                child: ColoredBox(color: Colors.black),
+              ),
+            ),
+          ),
+
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SidebarWidget(
+              indiceSelecionado: _indiceSelecionado,
+              onItemSelecionado: (i) => setState(() => _indiceSelecionado = i),
+              onExpandida: (expandida) =>
+                  setState(() => _sidebarExpandida = expandida),
             ),
           ),
         ],

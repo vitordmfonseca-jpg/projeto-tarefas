@@ -52,7 +52,12 @@ class PainelTarefasWidget extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Excluir tarefa'),
-        content: Text('Deseja excluir "${tarefa.titulo}"?'),
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * .5,
+          ),
+          child: Text('Deseja excluir "${tarefa.titulo}"?'),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -135,41 +140,52 @@ class PainelTarefasWidget extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (vm.tarefas.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: colorScheme.primary.withValues(alpha: 0.4),
+
+                      SizedBox(
+                        height: 52,
+                        child: Visibility(
+                          visible: vm.tarefas.isNotEmpty,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
                             ),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                vm.totalFormatadoDia,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: colorScheme.primary,
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary.withValues(
+                                alpha: 0.12,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.4,
                                 ),
                               ),
-                              Text(
-                                'total do dia',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: colorScheme.onSurface.withValues(
-                                    alpha: 0.5,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  vm.totalFormatadoDia,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.primary,
                                   ),
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  'total do dia',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -254,7 +270,7 @@ class PainelTarefasWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Meta do dia',
+                                  'Horas diárias',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,

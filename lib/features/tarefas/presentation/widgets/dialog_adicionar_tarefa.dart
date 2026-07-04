@@ -136,7 +136,7 @@ class _DialogAdicionarTarefaState extends State<DialogAdicionarTarefa> {
                   decoration: inputDecoration.copyWith(
                     labelText: 'Descrição (opcional)',
                   ),
-                  maxLines: 2,
+                  maxLines: 6,
                 ),
                 const SizedBox(height: 12),
                 Row(
