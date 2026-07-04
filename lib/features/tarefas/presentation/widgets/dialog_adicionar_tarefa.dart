@@ -112,182 +112,185 @@ class _DialogAdicionarTarefaState extends State<DialogAdicionarTarefa> {
       builder: (context, _) {
         return Dialog(
           child: SizedBox(
-            width: 520,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-                  child: Row(
-                    children: [
-                      Text(
-                        _titulo,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (_isVisualizacao)
-                        IconButton(
-                          icon: const Icon(Icons.close, size: 18),
-                          onPressed: () => Navigator.of(context).pop(),
-                          style: IconButton.styleFrom(
-                            foregroundColor: colorScheme.onSurface.withValues(
-                              alpha: 0.5,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Conteúdo
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (_vm.erro != null)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.error.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: colorScheme.error.withValues(alpha: 0.4),
-                            ),
-                          ),
-                          child: Text(
-                            _vm.erro!,
-                            style: TextStyle(
-                              color: colorScheme.error,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-
-                      _buildLabel('Título'),
-                      TextField(
-                        controller: _tituloCtrl,
-                        readOnly: _isVisualizacao,
-                        decoration: const InputDecoration(
-                          hintText: 'Nome da tarefa',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      _buildLabel('Descrição'),
-                      TextField(
-                        controller: _descricaoCtrl,
-                        readOnly: _isVisualizacao,
-                        maxLines: _isVisualizacao ? null : 3,
-                        decoration: InputDecoration(
-                          hintText: _isVisualizacao
-                              ? 'Sem descrição'
-                              : 'Detalhes opcionais...',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      _buildLabel('Tempo gasto'),
-                      if (_isVisualizacao)
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.primary.withValues(
-                                alpha: 0.12,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: colorScheme.primary.withValues(
-                                  alpha: 0.4,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              _tempoFormatado,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        )
-                      else
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _horasCtrl,
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  hintText: '0',
-                                  suffixText: 'h',
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextField(
-                                controller: _minutosCtrl,
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  hintText: '0',
-                                  suffixText: 'm',
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Rodapé com fundo diferente — só nos modos de edição/cadastro
-                if (!_isVisualizacao)
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface,
-                      border: Border(
-                        top: BorderSide(
-                          color: colorScheme.outline.withValues(alpha: 0.1),
-                        ),
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                    ),
+            width: MediaQuery.of(context).size.width * .5,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancelar'),
+                        Text(
+                          _titulo,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        FilledButton(
-                          onPressed: _salvar,
-                          child: const Text('Gravar'),
-                        ),
+                        const Spacer(),
+                        if (_isVisualizacao)
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: IconButton.styleFrom(
+                              foregroundColor: colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
-              ],
+
+                  // Conteúdo
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_vm.erro != null)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.error.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: colorScheme.error.withValues(alpha: 0.4),
+                              ),
+                            ),
+                            child: Text(
+                              _vm.erro!,
+                              style: TextStyle(
+                                color: colorScheme.error,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+
+                        _buildLabel('Título'),
+                        TextField(
+                          controller: _tituloCtrl,
+                          readOnly: _isVisualizacao,
+                          decoration: const InputDecoration(
+                            hintText: 'Nome da tarefa',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        _buildLabel('Descrição'),
+                        TextField(
+                          controller: _descricaoCtrl,
+                          readOnly: _isVisualizacao,
+                          maxLines: 6,
+                          decoration: InputDecoration(
+                            hintText: _isVisualizacao
+                                ? 'Sem descrição'
+                                : 'Detalhes opcionais...',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        _buildLabel('Tempo gasto'),
+                        if (_isVisualizacao)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.12,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: colorScheme.primary.withValues(
+                                    alpha: 0.4,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                _tempoFormatado,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _horasCtrl,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    hintText: '0',
+                                    suffixText: 'h',
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextField(
+                                  controller: _minutosCtrl,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    hintText: '0',
+                                    suffixText: 'm',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+
+                  // Rodapé com fundo diferente — só nos modos de edição/cadastro
+                  if (!_isVisualizacao)
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surface,
+                        border: Border(
+                          top: BorderSide(
+                            color: colorScheme.outline.withValues(alpha: 0.1),
+                          ),
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancelar'),
+                          ),
+                          const SizedBox(width: 8),
+                          FilledButton(
+                            onPressed: _salvar,
+                            child: const Text('Gravar'),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         );

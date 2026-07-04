@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; Non-commercial use only
 
-#define MyAppName "Gerenciador de tarefas"
-#define MyAppVersion "1.0.9"
+#define MyAppName "Calendário de Tarefas"
+#define MyAppVersion "1.0.10"
 #define MyAppPublisher "Vitor Daniel Matos Fonseca"
 #define MyAppURL "https://www.example.com/"
 #define MyAppExeName "tarefas_calendario.exe"

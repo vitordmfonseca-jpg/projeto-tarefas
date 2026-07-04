@@ -30,60 +30,64 @@ class TarefaCardWidget extends StatelessWidget {
       child: InkWell(
         onTap: onVisualizar,
         borderRadius: BorderRadius.circular(16),
-        child: ListTile(
-          leading: SizedBox(
-            width: 64,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.4),
+        child: Tooltip(
+          message: tarefa.titulo,
+          child: ListTile(
+            leading: SizedBox(
+              width: 64,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.4),
+                  ),
                 ),
-              ),
-              child: Text(
-                _tempoFormatado,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.primary,
+                child: Text(
+                  _tempoFormatado,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.primary,
+                  ),
                 ),
               ),
             ),
-          ),
-          title: Text(
-            tarefa.titulo,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-          ),
-          subtitle: tarefa.descricao != null && tarefa.descricao!.isNotEmpty
-              ? Text(
-                  tarefa.descricao!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                )
-              : null,
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit_outlined, size: 16),
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
-                onPressed: onEditar,
-                tooltip: 'Editar tarefa',
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, size: 16),
-                color: colorScheme.error,
-                onPressed: onDeletar,
-                tooltip: 'Excluir tarefa',
-              ),
-            ],
+            title: Text(
+              tarefa.titulo,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+            subtitle: tarefa.descricao != null && tarefa.descricao!.isNotEmpty
+                ? Text(
+                    tarefa.descricao!,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  )
+                : null,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined, size: 16),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  onPressed: onEditar,
+                  tooltip: 'Editar tarefa',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline, size: 16),
+                  color: colorScheme.error,
+                  onPressed: onDeletar,
+                  tooltip: 'Excluir tarefa',
+                ),
+              ],
+            ),
           ),
         ),
       ),
