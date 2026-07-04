@@ -2,9 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; Non-commercial use only
 
-#define MyAppName "Calendário de Tarefas"
-#define MyAppVersion "1.0.11"
-#define MyAppPublisher "Vitor Daniel Matos Fonseca"
+#define MyAppName "Calendario de Tarefas"
+#define MyAppVersion "1.0.12"
+#define MyAppPublisher "Vitor D M Fonseca"
 #define MyAppURL "https://www.example.com/"
 #define MyAppExeName "tarefas_calendario.exe"
 
@@ -56,4 +56,3 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
