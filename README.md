@@ -147,6 +147,10 @@ flutter pub get
 flutter run -d windows
 ```
 
+## Download
+
+Prefere instalar direto sem compilar? Baixe o instalador mais recente na página de [Releases](https://github.com/vitordmfonseca-jpg/projeto-tarefas/releases).
+
 ### Build para produção
 
 ```bash
