@@ -25,8 +25,6 @@ class PainelTarefasWidget extends StatelessWidget {
     'Dezembro',
   ];
 
-  static const int _metaMinutosDia = 530; // 8h50m
-
   String _tituloDia(DateTime dia) {
     final nomeDia = _diasSemana[dia.weekday - 1];
     final nomeMes = _meses[dia.month - 1];
@@ -52,12 +50,7 @@ class PainelTarefasWidget extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Excluir tarefa'),
-        content: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * .5,
-          ),
-          child: Text('Deseja excluir "${tarefa.titulo}"?'),
-        ),
+        content: Text('Deseja excluir "${tarefa.titulo}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -83,16 +76,16 @@ class PainelTarefasWidget extends StatelessWidget {
     return ListenableBuilder(
       listenable: vm,
       builder: (context, _) {
-        final progresso = (vm.totalMinutosDia / _metaMinutosDia).clamp(
+        final progresso = (vm.totalMinutosDia / vm.metaMinutosDia).clamp(
           0.0,
           1.0,
         );
-        final bateuMeta = vm.totalMinutosDia >= _metaMinutosDia;
-        final minutosRestantes = _metaMinutosDia - vm.totalMinutosDia;
+        final bateuMeta = vm.totalMinutosDia >= vm.metaMinutosDia;
+        final minutosRestantes = vm.metaMinutosDia - vm.totalMinutosDia;
         final horasRest = minutosRestantes ~/ 60;
         final minRest = minutosRestantes % 60;
         final textoMeta = bateuMeta
-            ? 'Meta atingida!'
+            ? 'Meta atingida! 🎉'
             : 'Faltam ${horasRest > 0 ? '${horasRest}h ' : ''}${minRest}m';
 
         return Container(
@@ -140,52 +133,41 @@ class PainelTarefasWidget extends StatelessWidget {
                           ],
                         ),
                       ),
-
-                      SizedBox(
-                        height: 52,
-                        child: Visibility(
-                          visible: vm.tarefas.isNotEmpty,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.primary.withValues(
-                                alpha: 0.12,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: colorScheme.primary.withValues(
-                                  alpha: 0.4,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  vm.totalFormatadoDia,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: colorScheme.primary,
-                                  ),
-                                ),
-                                Text(
-                                  'total do dia',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: colorScheme.onSurface.withValues(
-                                      alpha: 0.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      if (vm.tarefas.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: colorScheme.primary.withValues(alpha: 0.4),
                             ),
                           ),
+                          child: Column(
+                            children: [
+                              Text(
+                                vm.totalFormatadoDia,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                              Text(
+                                'total do dia',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -270,7 +252,7 @@ class PainelTarefasWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Horas diárias',
+                                  'Meta do dia',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,

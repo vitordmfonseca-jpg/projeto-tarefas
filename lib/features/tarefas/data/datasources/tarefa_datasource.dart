@@ -33,6 +33,17 @@ class TarefaDatasource {
     return resultado.map((map) => TarefaDto.fromMap(map)).toList();
   }
 
+  Future<List<TarefaDto>> buscarPorPeriodo(String inicio, String fim) async {
+    final db = await _dbHelper.database;
+    final resultado = await db.query(
+      'tarefas',
+      where: 'data BETWEEN ? AND ?',
+      whereArgs: [inicio, fim],
+      orderBy: 'data ASC, id ASC',
+    );
+    return resultado.map((map) => TarefaDto.fromMap(map)).toList();
+  }
+
   Future<void> inserir(TarefaDto dto) async {
     final db = await _dbHelper.database;
     await db.insert('tarefas', dto.toMap());

@@ -24,4 +24,9 @@ class DatabaseHelper {
       options: OpenDatabaseOptions(version: 1),
     );
   }
+
+  Future<void> fecharBanco() async {
+    await _database?.close();
+    _database = null;
+  }
 }

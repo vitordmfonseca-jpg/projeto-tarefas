@@ -27,29 +27,30 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
+          // Conteúdo — reconstruído a cada troca de aba
           Positioned.fill(
             left: _larguraSidebarRecolhida,
-            child: IndexedStack(
-              index: _indiceSelecionado,
-              children: [
-                const TarefasPage(),
-                const TimesheetPage(),
-                ConfiguracoesPage(temaNotifier: widget.temaNotifier),
-              ],
-            ),
+            child: switch (_indiceSelecionado) {
+              0 => const TarefasPage(),
+              1 => const TimesheetPage(),
+              2 => ConfiguracoesPage(temaNotifier: widget.temaNotifier),
+              _ => const SizedBox.shrink(),
+            },
           ),
 
+          // Scrim
           Positioned.fill(
             left: _larguraSidebarRecolhida,
             child: IgnorePointer(
               child: AnimatedOpacity(
                 opacity: _sidebarExpandida ? 0.3 : 0.0,
                 duration: const Duration(milliseconds: 200),
-                child: ColoredBox(color: Colors.black),
+                child: const ColoredBox(color: Colors.black),
               ),
             ),
           ),
 
+          // Sidebar
           Align(
             alignment: Alignment.centerLeft,
             child: SidebarWidget(

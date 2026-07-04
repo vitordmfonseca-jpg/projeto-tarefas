@@ -24,6 +24,10 @@ class AppTheme {
       backgroundColor: const Color(0xFF1A1D27),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
+    dividerTheme: DividerThemeData(
+      color: Colors.white.withValues(alpha: 0.08),
+      thickness: 1,
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: const Color(0xFF0F1117),
@@ -64,6 +68,10 @@ class AppTheme {
     dialogTheme: DialogThemeData(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+    dividerTheme: DividerThemeData(
+      color: Colors.black.withValues(alpha: 0.08),
+      thickness: 1,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

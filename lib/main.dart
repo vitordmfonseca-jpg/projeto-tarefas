@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:tarefas_calendario/core/theme/app_theme.dart';
-import 'package:tarefas_calendario/features/home/presentation/home_page.dart';
+import 'package:tarefas_calendario/features/splash/presentation/pages/splash_page.dart';
 import 'package:window_manager/window_manager.dart'
     show WindowOptions, windowManager;
 
-final temaNotifier = ValueNotifier<ThemeMode>(ThemeMode.dark);
+// Notifier global — criado aqui para o MaterialApp conseguir ouvir
+final temaNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
 
   await windowManager.ensureInitialized();
 
@@ -42,7 +39,7 @@ void main() async {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        home: HomePage(temaNotifier: temaNotifier),
+        home: const SplashPage(),
       ),
     ),
   );

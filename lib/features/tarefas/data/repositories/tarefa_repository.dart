@@ -8,19 +8,30 @@ class TarefaRepository implements ITarefaRepository {
 
   TarefaRepository(this._datasource);
 
+  String _formatarData(DateTime data) =>
+      '${data.year}-${data.month.toString().padLeft(2, '0')}-${data.day.toString().padLeft(2, '0')}';
+
   @override
   Future<List<TarefaEntity>> buscarPorDia(DateTime dia) async {
-    final dataStr =
-        '${dia.year}-${dia.month.toString().padLeft(2, '0')}-${dia.day.toString().padLeft(2, '0')}';
+    final dtos = await _datasource.buscarPorDia(_formatarData(dia));
+    return dtos.map((dto) => dto.toEntity()).toList();
+  }
 
-    final dtos = await _datasource.buscarPorDia(dataStr);
+  @override
+  Future<List<TarefaEntity>> buscarPorPeriodo(
+    DateTime inicio,
+    DateTime fim,
+  ) async {
+    final dtos = await _datasource.buscarPorPeriodo(
+      _formatarData(inicio),
+      _formatarData(fim),
+    );
     return dtos.map((dto) => dto.toEntity()).toList();
   }
 
   @override
   Future<void> salvar(TarefaEntity tarefa) async {
     final dto = TarefaDto.fromEntity(tarefa);
-
     if (tarefa.id == null) {
       await _datasource.inserir(dto);
     } else {

@@ -23,6 +23,7 @@ class _TarefasPageState extends State<TarefasPage> {
     final datasource = TarefaDatasource(dbHelper);
     final repository = TarefaRepository(datasource);
     _vm = TarefasViewModel(repository);
+    _vm.carregarMeta();
     _vm.selecionarDia(DateTime.now());
   }
 
