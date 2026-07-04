@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
+import 'package:tarefas_calendario/features/tarefas/presentation/enums/modo_dialog.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/viewmodels/tarefas_viewmodel.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/dialog_adicionar_tarefa.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/tarefa_card_widget.dart';
@@ -33,16 +34,18 @@ class PainelTarefasWidget extends StatelessWidget {
 
   Future<void> _abrirDialog(
     BuildContext context, {
-    TarefaEntity? tarefaParaEditar,
+    TarefaEntity? tarefa,
+    ModoDialog modo = ModoDialog.cadastro,
   }) async {
-    final tarefa = await showDialog<TarefaEntity>(
+    final resultado = await showDialog<TarefaEntity>(
       context: context,
       builder: (_) => DialogAdicionarTarefa(
         diaSelecionado: vm.diaSelecionado,
-        tarefaParaEditar: tarefaParaEditar,
+        tarefa: tarefa,
+        modo: modo,
       ),
     );
-    if (tarefa != null) await vm.salvar(tarefa);
+    if (resultado != null) await vm.salvar(resultado);
   }
 
   Future<void> _deletarTarefa(BuildContext context, TarefaEntity tarefa) async {
@@ -211,9 +214,15 @@ class PainelTarefasWidget extends StatelessWidget {
                           itemCount: vm.tarefas.length,
                           itemBuilder: (_, i) => TarefaCardWidget(
                             tarefa: vm.tarefas[i],
+                            onVisualizar: () => _abrirDialog(
+                              context,
+                              tarefa: vm.tarefas[i],
+                              modo: ModoDialog.visualizacao,
+                            ),
                             onEditar: () => _abrirDialog(
                               context,
-                              tarefaParaEditar: vm.tarefas[i],
+                              tarefa: vm.tarefas[i],
+                              modo: ModoDialog.edicao,
                             ),
                             onDeletar: () =>
                                 _deletarTarefa(context, vm.tarefas[i]),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/core/ui_components/sidebar/sidebar_item_widget.dart';
+import 'package:tarefas_calendario/main.dart';
 
 class SidebarWidget extends StatefulWidget {
   final int indiceSelecionado;
@@ -70,12 +71,6 @@ class _SidebarWidgetState extends State<SidebarWidget> {
 
               const Spacer(),
 
-              Divider(
-                indent: 8,
-                endIndent: 8,
-                color: colorScheme.outline.withValues(alpha: 0.1),
-              ),
-
               SidebarItemWidget(
                 icone: Icons.settings_outlined,
                 label: 'Configurações',
@@ -84,7 +79,24 @@ class _SidebarWidgetState extends State<SidebarWidget> {
                 onTap: () => widget.onItemSelecionado(2),
               ),
 
-              const SizedBox(height: 12),
+              Divider(
+                indent: 8,
+                endIndent: 8,
+                color: colorScheme.outline.withValues(alpha: 0.1),
+              ),
+
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'v${packageInfo.version}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: colorScheme.onSurface.withValues(alpha: 0.3),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

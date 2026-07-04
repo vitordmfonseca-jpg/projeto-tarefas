@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:tarefas_calendario/features/configuracoes/data/datasources/configuracoes_datasource.dart';
 import 'package:tarefas_calendario/features/configuracoes/data/repositories/configuracoes_repository.dart';
 import 'package:tarefas_calendario/features/configuracoes/presentation/viewmodels/configuracoes_viewmodel.dart';
@@ -16,6 +17,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
   late final ConfiguracoesViewModel _vm;
   late final TextEditingController _horasCtrl;
   late final TextEditingController _minutosCtrl;
+  bool _iniciarComWindows = false;
 
   @override
   void initState() {
@@ -32,6 +34,19 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
     await _vm.init();
     _horasCtrl.text = '${_vm.configuracoes.metaHoras}';
     _minutosCtrl.text = '${_vm.configuracoes.metaMinutos}';
+
+    // Lê o estado atual do iniciar com o Windows
+    final isEnabled = await launchAtStartup.isEnabled();
+    if (mounted) setState(() => _iniciarComWindows = isEnabled);
+  }
+
+  Future<void> _toggleIniciarComWindows(bool valor) async {
+    if (valor) {
+      await launchAtStartup.enable();
+    } else {
+      await launchAtStartup.disable();
+    }
+    setState(() => _iniciarComWindows = valor);
   }
 
   @override
@@ -115,54 +130,89 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
               _SecaoWidget(titulo: 'Aparência'),
               const SizedBox(height: 16),
               _CartaoWidget(
-                child: Row(
+                child: Column(
                   children: [
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Tema',
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tema',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Define a aparência do aplicativo',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Define a aparência do aplicativo',
-                            style: TextStyle(fontSize: 12),
+                        ),
+                        SegmentedButton<ThemeMode>(
+                          style: SegmentedButton.styleFrom(
+                            selectedBackgroundColor: colorScheme.primary,
+                            selectedForegroundColor: colorScheme.onPrimary,
+                            foregroundColor: colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.2),
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                    SegmentedButton<ThemeMode>(
-                      style: SegmentedButton.styleFrom(
-                        selectedBackgroundColor: colorScheme.primary,
-                        selectedForegroundColor: colorScheme.onPrimary,
-                        foregroundColor: colorScheme.onSurface.withValues(
-                          alpha: 0.6,
-                        ),
-                        side: BorderSide(
-                          color: colorScheme.outline.withValues(alpha: 0.2),
-                        ),
-                      ),
-                      segments: const [
-                        ButtonSegment(
-                          value: ThemeMode.system,
-                          label: Text('Sistema'),
-                          icon: Icon(Icons.brightness_auto_outlined, size: 16),
-                        ),
-                        ButtonSegment(
-                          value: ThemeMode.light,
-                          label: Text('Claro'),
-                          icon: Icon(Icons.light_mode_outlined, size: 16),
-                        ),
-                        ButtonSegment(
-                          value: ThemeMode.dark,
-                          label: Text('Escuro'),
-                          icon: Icon(Icons.dark_mode_outlined, size: 16),
+                          segments: const [
+                            ButtonSegment(
+                              value: ThemeMode.system,
+                              label: Text('Sistema'),
+                              icon: Icon(
+                                Icons.brightness_auto_outlined,
+                                size: 16,
+                              ),
+                            ),
+                            ButtonSegment(
+                              value: ThemeMode.light,
+                              label: Text('Claro'),
+                              icon: Icon(Icons.light_mode_outlined, size: 16),
+                            ),
+                            ButtonSegment(
+                              value: ThemeMode.dark,
+                              label: Text('Escuro'),
+                              icon: Icon(Icons.dark_mode_outlined, size: 16),
+                            ),
+                          ],
+                          selected: {_vm.configuracoes.themeMode},
+                          onSelectionChanged: (s) => _vm.salvarTema(s.first),
                         ),
                       ],
-                      selected: {_vm.configuracoes.themeMode},
-                      onSelectionChanged: (s) => _vm.salvarTema(s.first),
+                    ),
+                    Divider(
+                      height: 32,
+                      color: colorScheme.outline.withValues(alpha: 0.1),
+                    ),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Iniciar com o Windows',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Abre o app automaticamente ao ligar o computador',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Switch(
+                          value: _iniciarComWindows,
+                          onChanged: _toggleIniciarComWindows,
+                        ),
+                      ],
                     ),
                   ],
                 ),

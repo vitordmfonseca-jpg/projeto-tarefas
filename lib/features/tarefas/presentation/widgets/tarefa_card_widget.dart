@@ -3,14 +3,16 @@ import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entit
 
 class TarefaCardWidget extends StatelessWidget {
   final TarefaEntity tarefa;
-  final VoidCallback onDeletar;
+  final VoidCallback onVisualizar;
   final VoidCallback onEditar;
+  final VoidCallback onDeletar;
 
   const TarefaCardWidget({
     super.key,
     required this.tarefa,
-    required this.onDeletar,
+    required this.onVisualizar,
     required this.onEditar,
+    required this.onDeletar,
   });
 
   String get _tempoFormatado {
@@ -26,7 +28,7 @@ class TarefaCardWidget extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
-        onTap: onEditar,
+        onTap: onVisualizar,
         borderRadius: BorderRadius.circular(16),
         child: ListTile(
           leading: SizedBox(
@@ -51,13 +53,9 @@ class TarefaCardWidget extends StatelessWidget {
               ),
             ),
           ),
-          title: Tooltip(
-            message: tarefa.titulo,
-            child: Text(
-              tarefa.titulo,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            ),
+          title: Text(
+            tarefa.titulo,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
           subtitle: tarefa.descricao != null && tarefa.descricao!.isNotEmpty
               ? Text(
@@ -70,11 +68,22 @@ class TarefaCardWidget extends StatelessWidget {
                   ),
                 )
               : null,
-          trailing: IconButton(
-            icon: const Icon(Icons.delete_outline, size: 18),
-            color: colorScheme.error,
-            onPressed: onDeletar,
-            tooltip: 'Excluir tarefa',
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 16),
+                color: colorScheme.onSurface.withValues(alpha: 0.5),
+                onPressed: onEditar,
+                tooltip: 'Editar tarefa',
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, size: 16),
+                color: colorScheme.error,
+                onPressed: onDeletar,
+                tooltip: 'Excluir tarefa',
+              ),
+            ],
           ),
         ),
       ),
