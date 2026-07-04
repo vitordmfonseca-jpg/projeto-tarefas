@@ -149,7 +149,7 @@ flutter run -d windows
 
 ## Download
 
-Prefere instalar direto sem compilar? Baixe o instalador mais recente na página de [Releases](https://github.com/vitordmfonseca-jpg/projeto-tarefas/releases/latest).
+Prefere instalar direto sem compilar? Baixe o instalador mais recente na página de [Releases](https://github.com/vitordmfonseca-jpg/projeto-tarefas/releases/latest/download/inst_gerencia_tarefas.exe).
 
 ### Build para produção
 
