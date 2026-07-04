@@ -73,7 +73,7 @@ class TarefaCardWidget extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.edit_outlined, size: 16),
-                color: colorScheme.onSurface.withValues(alpha: 0.5),
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
                 onPressed: onEditar,
                 tooltip: 'Editar tarefa',
               ),

@@ -182,13 +182,13 @@ class _CalendarioDiaWidget extends StatelessWidget {
 
     Color? corFundo() {
       if (isDiaSelecionado) return colorScheme.primary;
-      if (isHoje) return colorScheme.primary.withOpacity(0.3);
+      if (isHoje) return colorScheme.secondary;
       return null;
     }
 
     Color corTexto() {
       if (isDiaSelecionado) return colorScheme.onPrimary;
-      if (isHoje) return colorScheme.onPrimary;
+      if (isHoje) return colorScheme.onSecondary;
       if (isMesAtual) return colorScheme.onSurface;
       return colorScheme.onSurface.withOpacity(0.3);
     }
@@ -198,6 +198,9 @@ class _CalendarioDiaWidget extends StatelessWidget {
       child: InkWell(
         onTap: selecionaDia,
         borderRadius: BorderRadius.circular(15),
+        overlayColor: WidgetStateProperty.all(
+          colorScheme.primary.withValues(alpha: 0.08),
+        ),
         child: Center(
           child: Container(
             decoration: BoxDecoration(

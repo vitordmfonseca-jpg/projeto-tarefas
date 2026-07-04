@@ -4,33 +4,12 @@ import 'package:tarefas_calendario/features/tarefas/presentation/enums/modo_dial
 import 'package:tarefas_calendario/features/tarefas/presentation/viewmodels/tarefas_viewmodel.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/dialog_adicionar_tarefa.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/tarefa_card_widget.dart';
+import 'package:tarefas_calendario/core/utils/date_utils.dart';
 
 class PainelTarefasWidget extends StatelessWidget {
   final TarefasViewModel vm;
 
   const PainelTarefasWidget({super.key, required this.vm});
-
-  static const _diasSemana = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-  static const _meses = [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
-  ];
-
-  String _tituloDia(DateTime dia) {
-    final nomeDia = _diasSemana[dia.weekday - 1];
-    final nomeMes = _meses[dia.month - 1];
-    return '$nomeDia, ${dia.day} de $nomeMes de ${dia.year}';
-  }
 
   Future<void> _abrirDialog(
     BuildContext context, {
@@ -88,7 +67,7 @@ class PainelTarefasWidget extends StatelessWidget {
         final horasRest = minutosRestantes ~/ 60;
         final minRest = minutosRestantes % 60;
         final textoMeta = bateuMeta
-            ? 'Meta atingida! 🎉'
+            ? 'Meta atingida!'
             : 'Faltam ${horasRest > 0 ? '${horasRest}h ' : ''}${minRest}m';
 
         return Container(
@@ -104,9 +83,16 @@ class PainelTarefasWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header
-                Padding(
+                // Header — usa secondary para destacar o dia
+                Container(
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: colorScheme.outline.withValues(alpha: 0.1),
+                      ),
+                    ),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +102,9 @@ class PainelTarefasWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _tituloDia(vm.diaSelecionado),
+                              AppDateUtils.formatarDiaCompleto(
+                                vm.diaSelecionado,
+                              ),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -124,14 +112,28 @@ class PainelTarefasWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
-                            Text(
-                              '${vm.tarefas.length} tarefas registradas',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.onSurface.withValues(
-                                  alpha: 0.5,
+                            // Usa secondary para o contador de tarefas
+                            Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.secondary,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '${vm.tarefas.length} tarefas registradas',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -173,11 +175,6 @@ class PainelTarefasWidget extends StatelessWidget {
                         ),
                     ],
                   ),
-                ),
-
-                Divider(
-                  height: 1,
-                  color: colorScheme.outline.withValues(alpha: 0.1),
                 ),
 
                 // Lista
@@ -275,8 +272,9 @@ class PainelTarefasWidget extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
+                                    // secondary quando bate a meta
                                     color: bateuMeta
-                                        ? Colors.green
+                                        ? colorScheme.secondary
                                         : colorScheme.onSurface.withValues(
                                             alpha: 0.7,
                                           ),
@@ -292,9 +290,10 @@ class PainelTarefasWidget extends StatelessWidget {
                                 backgroundColor: colorScheme.outline.withValues(
                                   alpha: 0.15,
                                 ),
+                                // secondary quando bate a meta
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   bateuMeta
-                                      ? Colors.green
+                                      ? colorScheme.secondary
                                       : colorScheme.primary,
                                 ),
                                 minHeight: 6,

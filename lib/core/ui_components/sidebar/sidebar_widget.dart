@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tarefas_calendario/core/ui_components/sidebar/sidebar_item_widget.dart';
-import 'package:tarefas_calendario/main.dart';
+import 'package:yaml/yaml.dart';
 
 class SidebarWidget extends StatefulWidget {
   final int indiceSelecionado;
@@ -20,6 +21,7 @@ class SidebarWidget extends StatefulWidget {
 
 class _SidebarWidgetState extends State<SidebarWidget> {
   bool _expandida = false;
+  late final Future<String> _versaoFuture;
 
   static const _larguraExpandida = 200.0;
   static const _larguraRecolhida = 64.0;
@@ -28,6 +30,18 @@ class _SidebarWidgetState extends State<SidebarWidget> {
     (icone: Icons.calendar_month_outlined, label: 'Calendário'),
     (icone: Icons.access_time_outlined, label: 'Timesheet'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _versaoFuture = _lerVersao();
+  }
+
+  Future<String> _lerVersao() async {
+    final yaml = await rootBundle.loadString('pubspec.yaml');
+    final doc = loadYaml(yaml);
+    return doc['version'].toString().split('+').first;
+  }
 
   void _setExpandida(bool valor) {
     setState(() => _expandida = valor);
@@ -88,15 +102,23 @@ class _SidebarWidgetState extends State<SidebarWidget> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'v${packageInfo.version}',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: colorScheme.onSurface.withValues(alpha: 0.3),
-                    ),
+                  child: FutureBuilder<String>(
+                    future: _versaoFuture,
+                    builder: (_, snap) {
+                      if (!snap.hasData) return const SizedBox.shrink();
+                      return Text(
+                        'v${snap.data}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: colorScheme.onSurface.withValues(alpha: 0.3),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
+
+              const SizedBox(height: 4),
             ],
           ),
         ),

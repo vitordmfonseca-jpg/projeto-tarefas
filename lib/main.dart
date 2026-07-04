@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tarefas_calendario/core/theme/app_theme.dart';
 import 'package:tarefas_calendario/features/splash/presentation/pages/splash_page.dart';
 import 'package:window_manager/window_manager.dart'
@@ -12,18 +11,12 @@ import 'package:window_manager/window_manager.dart'
 // Notifier global — ouvido pelo MaterialApp para trocar o tema
 final temaNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 
-// Info do pacote — inicializado uma vez e reutilizado no app
-late final PackageInfo packageInfo;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializa info do pacote uma única vez
-  packageInfo = await PackageInfo.fromPlatform();
-
-  // Configura o launch at startup com os dados do app
+  // launchAtStartup configurado com valores fixos — não depende do PackageInfo
   launchAtStartup.setup(
-    appName: packageInfo.appName,
+    appName: 'Calendário de Tarefas',
     appPath: Platform.resolvedExecutable,
     packageName: 'dev.vitor.tarefas_calendario',
   );

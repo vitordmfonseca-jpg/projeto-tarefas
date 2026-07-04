@@ -43,21 +43,25 @@ class TimesheetHeaderWidget extends StatelessWidget {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
           const SizedBox(width: 12),
+          // Botão "Hoje" usa secondary
           OutlinedButton(
             onPressed: vm.irParaHoje,
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              foregroundColor: colorScheme.secondary,
               side: BorderSide(
-                color: colorScheme.outline.withValues(alpha: 0.4),
+                color: colorScheme.secondary.withValues(alpha: 0.6),
               ),
             ),
-            child: const Text('Hoje', style: TextStyle(fontSize: 12)),
+            child: const Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Text('Hoje', style: TextStyle(fontSize: 12)),
+            ),
           ),
           const Spacer(),
 
-          // Botão exportar
           IconButton(
             onPressed: () async {
               final caminho = await vm.exportarMd();

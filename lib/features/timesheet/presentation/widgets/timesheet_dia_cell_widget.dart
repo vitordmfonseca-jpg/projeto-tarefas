@@ -44,8 +44,9 @@ class TimesheetDiaCellWidget extends StatelessWidget {
         color: colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
+          // secondary para hoje, primary para dias com tarefas
           color: isHoje
-              ? colorScheme.primary.withValues(alpha: 0.5)
+              ? colorScheme.secondary.withValues(alpha: 0.6)
               : colorScheme.outline.withValues(alpha: 0.1),
           width: isHoje ? 1.5 : 1,
         ),
@@ -53,12 +54,12 @@ class TimesheetDiaCellWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header da célula
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
+              // secondary no fundo do header quando hoje
               color: isHoje
-                  ? colorScheme.primary.withValues(alpha: 0.15)
+                  ? colorScheme.secondary.withValues(alpha: 0.12)
                   : colorScheme.surface,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(10),
@@ -73,8 +74,9 @@ class TimesheetDiaCellWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
+                    // secondary no texto do dia de hoje
                     color: isHoje
-                        ? colorScheme.primary
+                        ? colorScheme.secondary
                         : colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
@@ -101,7 +103,6 @@ class TimesheetDiaCellWidget extends StatelessWidget {
             ),
           ),
 
-          // Lista de tarefas
           Expanded(
             child: temTarefas
                 ? ListView.builder(

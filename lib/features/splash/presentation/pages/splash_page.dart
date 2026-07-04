@@ -62,7 +62,6 @@ class _SplashPageState extends State<SplashPage> {
           children: [
             const Spacer(),
 
-            // Ícone
             Center(
               child: Container(
                 width: 80,
@@ -88,7 +87,6 @@ class _SplashPageState extends State<SplashPage> {
 
             const SizedBox(height: 24),
 
-            // Nome do app
             Text(
               'Calendário de Tarefas',
               textAlign: TextAlign.center,
@@ -116,7 +114,6 @@ class _SplashPageState extends State<SplashPage> {
 
             const Spacer(),
 
-            // Loading discreto no rodapé
             Padding(
               padding: const EdgeInsets.only(bottom: 32),
               child: Center(
