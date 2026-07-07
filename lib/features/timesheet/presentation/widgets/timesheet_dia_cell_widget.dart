@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tarefas_calendario/core/utils/date_utils.dart';
+import 'package:tarefas_calendario/core/utils/app_utils.dart';
 import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
 
 class TimesheetDiaCellWidget extends StatelessWidget {

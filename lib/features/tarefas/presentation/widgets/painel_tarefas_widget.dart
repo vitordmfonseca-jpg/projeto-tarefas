@@ -4,7 +4,7 @@ import 'package:tarefas_calendario/features/tarefas/presentation/enums/modo_dial
 import 'package:tarefas_calendario/features/tarefas/presentation/viewmodels/tarefas_viewmodel.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/dialog_adicionar_tarefa.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/tarefa_card_widget.dart';
-import 'package:tarefas_calendario/core/utils/date_utils.dart';
+import 'package:tarefas_calendario/core/utils/app_utils.dart';
 
 class PainelTarefasWidget extends StatelessWidget {
   final TarefasViewModel vm;

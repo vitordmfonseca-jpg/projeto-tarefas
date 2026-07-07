@@ -1,0 +1,1 @@
+enum ModoTimesheet { semanal, mensal }

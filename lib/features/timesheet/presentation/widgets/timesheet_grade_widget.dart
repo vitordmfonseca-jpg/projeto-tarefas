@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tarefas_calendario/core/utils/date_utils.dart';
-import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
+import 'package:tarefas_calendario/core/utils/app_utils.dart';
+import 'package:tarefas_calendario/features/timesheet/domain/enums/modo_timesheet.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/viewmodels/timesheet_viewmodel.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/widgets/timesheet_dia_cell_widget.dart';
 
@@ -9,71 +9,27 @@ class TimesheetGradeWidget extends StatelessWidget {
 
   const TimesheetGradeWidget({super.key, required this.vm});
 
-  List<TarefaEntity> _tarefasDoDia(DateTime dia) {
-    final chave = DateTime(dia.year, dia.month, dia.day);
-    return vm.tarefasPorDia[chave] ?? [];
-  }
+  @override
+  Widget build(BuildContext context) {
+    final dias = vm.calcularDiasDoPeriodo();
 
-  bool _isHoje(DateTime dia) {
-    final hoje = DateTime.now();
-    return dia.year == hoje.year &&
-        dia.month == hoje.month &&
-        dia.day == hoje.day;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      child: vm.modo == ModoTimesheet.semanal
+          ? _TimesheetSemanalWidget(vm: vm, dias: dias)
+          : _TimesheetMensalWidget(vm: vm, dias: dias),
+    );
   }
+}
 
-  /// Gera lista de dias do período atual
-  List<DateTime> _diasDoPeriodo() {
-    final dias = <DateTime>[];
-    var dia = vm.inicioPeriodo;
-    while (!dia.isAfter(vm.fimPeriodo)) {
-      dias.add(dia);
-      dia = dia.add(const Duration(days: 1));
-    }
-    return dias;
-  }
+class _TimesheetSemanalWidget extends StatelessWidget {
+  final TimesheetViewModel vm;
+  final List<DateTime> dias;
+
+  const _TimesheetSemanalWidget({required this.vm, required this.dias});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final dias = _diasDoPeriodo();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Labels dos dias da semana
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-          child: Row(
-            children: AppDateUtils.diasSemana.map((label) {
-              return Expanded(
-                child: Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface.withValues(alpha: 0.4),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-
-        // Grade
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-            child: vm.modo == ModoTimesheet.semanal
-                ? _buildSemanal(dias)
-                : _buildMensal(dias),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSemanal(List<DateTime> dias) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: dias.map((dia) {
@@ -82,45 +38,55 @@ class TimesheetGradeWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child: TimesheetDiaCellWidget(
               dia: dia,
-              tarefas: _tarefasDoDia(dia),
-              isHoje: _isHoje(dia),
+              tarefas: vm.tarefasDoDia(dia),
+              isHoje: AppDateUtils.isHoje(dia),
             ),
           ),
         );
       }).toList(),
     );
   }
+}
 
-  Widget _buildMensal(List<DateTime> dias) {
-    // Divide os dias em semanas de 7
-    final semanas = <List<DateTime>>[];
-    for (var i = 0; i < dias.length; i += 7) {
-      semanas.add(dias.sublist(i, i + 7 > dias.length ? dias.length : i + 7));
-    }
+// Widget privado — modo mensal
+class _TimesheetMensalWidget extends StatelessWidget {
+  final TimesheetViewModel vm;
+  final List<DateTime> dias;
 
-    return Column(
-      children: semanas.map((semana) {
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: semana.map((dia) {
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3),
-                    child: TimesheetDiaCellWidget(
-                      dia: dia,
-                      tarefas: _tarefasDoDia(dia),
-                      isHoje: _isHoje(dia),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+  const _TimesheetMensalWidget({required this.vm, required this.dias});
+
+  @override
+  Widget build(BuildContext context) {
+    final semanas = (dias.length / 7).ceil();
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const espacoEntreItens = 6.0;
+        final alturaTotal = constraints.maxHeight;
+        final larguraTotal = constraints.maxWidth;
+        final alturaCelula =
+            (alturaTotal - (semanas - 1) * espacoEntreItens) / semanas;
+        final larguraCelula = (larguraTotal - 6 * espacoEntreItens) / 7;
+        final ratio = larguraCelula / alturaCelula;
+
+        return GridView.count(
+          crossAxisCount: 7,
+          crossAxisSpacing: espacoEntreItens,
+          mainAxisSpacing: espacoEntreItens,
+          childAspectRatio: ratio,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: dias
+              .map(
+                (dia) => TimesheetDiaCellWidget(
+                  dia: dia,
+                  tarefas: vm.tarefasDoDia(dia),
+                  isHoje: AppDateUtils.isHoje(dia),
+                ),
+              )
+              .toList(),
         );
-      }).toList(),
+      },
     );
   }
 }

@@ -89,7 +89,7 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "Vitor Fonseca" "\0"
+            VALUE "CompanyName", "dev.vitor" "\0"
             VALUE "FileDescription", "Calendário de Tarefas" "\0"
             VALUE "InternalName", "tarefas_calendario" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 Vitor Fonseca. All rights reserved." "\0"

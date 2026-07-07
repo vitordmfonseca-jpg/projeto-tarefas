@@ -26,7 +26,6 @@ class CustomCalendarioViewmodel extends ChangeNotifier {
     diasDoMes(_mesAtual);
   }
 
-  // Volta para o mês e dia atual
   void irParaHoje() {
     final hoje = DateTime.now();
     _diaSelecionado = hoje;

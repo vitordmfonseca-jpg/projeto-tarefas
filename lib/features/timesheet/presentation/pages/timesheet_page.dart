@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/features/tarefas/data/database_helper.dart';
 import 'package:tarefas_calendario/features/tarefas/data/datasources/tarefa_datasource.dart';
 import 'package:tarefas_calendario/features/tarefas/data/repositories/tarefa_repository.dart';
+import 'package:tarefas_calendario/features/timesheet/domain/usecases/busca_tarefas_periodo_usecase.dart';
+import 'package:tarefas_calendario/features/timesheet/domain/usecases/exportar_timesheet_usecase.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/viewmodels/timesheet_viewmodel.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/widgets/timesheet_grade_widget.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/widgets/timesheet_header_widget.dart';
@@ -62,7 +64,12 @@ class TimesheetPageState extends State<TimesheetPage> {
     final dbHelper = DatabaseHelper.instance;
     final datasource = TarefaDatasource(dbHelper);
     final repository = TarefaRepository(datasource);
-    _vm = TimesheetViewModel(repository);
+    final buscarTarefas = BuscarTarefasPeriodoUsecase(repository);
+    final exportarTimesheet = ExportarTimesheetUsecase();
+    _vm = TimesheetViewModel(
+      buscarTarefas: buscarTarefas,
+      exportarTimesheet: exportarTimesheet,
+    );
     _vm.init();
   }
 

@@ -3,6 +3,7 @@ import 'package:tarefas_calendario/core/ui_components/calendario/custom_calendar
 import 'package:tarefas_calendario/features/tarefas/data/database_helper.dart';
 import 'package:tarefas_calendario/features/tarefas/data/datasources/tarefa_datasource.dart';
 import 'package:tarefas_calendario/features/tarefas/data/repositories/tarefa_repository.dart';
+import 'package:tarefas_calendario/features/tarefas/domain/usecases/busca_dias_com_registro_usecase.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/viewmodels/tarefas_viewmodel.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/painel_tarefas_widget.dart';
 
@@ -22,9 +23,11 @@ class _TarefasPageState extends State<TarefasPage> {
     final dbHelper = DatabaseHelper.instance;
     final datasource = TarefaDatasource(dbHelper);
     final repository = TarefaRepository(datasource);
-    _vm = TarefasViewModel(repository);
+    final buscaDiasRegistro = BuscarDiasComRegistroUsecase(repository);
+    _vm = TarefasViewModel(repository, buscaDiasRegistro);
     _vm.carregarMeta();
     _vm.selecionarDia(DateTime.now());
+    _vm.carregarDiasDoMes(DateTime.now().month, DateTime.now().year);
   }
 
   @override
@@ -42,9 +45,16 @@ class _TarefasPageState extends State<TarefasPage> {
         children: [
           Flexible(
             flex: 2,
-            child: CustomCalendarioWidget(
-              mesAtual: DateTime.now(),
-              diaSelecionado: (dia) => _vm.selecionarDia(dia),
+            child: ListenableBuilder(
+              listenable: _vm,
+              builder: (context, child) {
+                return CustomCalendarioWidget(
+                  mesAtual: DateTime.now(),
+                  diaSelecionado: (dia) => _vm.selecionarDia(dia),
+                  diasComRegistro: _vm.diasComRegistro,
+                  onMesAlterado: (mes, ano) => _vm.carregarDiasDoMes(mes, ano),
+                );
+              },
             ),
           ),
           Flexible(child: PainelTarefasWidget(vm: _vm)),

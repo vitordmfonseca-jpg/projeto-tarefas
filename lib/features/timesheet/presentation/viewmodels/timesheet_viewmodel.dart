@@ -1,22 +1,24 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:tarefas_calendario/core/utils/date_utils.dart';
+import 'package:tarefas_calendario/core/utils/app_utils.dart';
 import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
-import 'package:tarefas_calendario/features/tarefas/domain/repositories/i_tarefa_repository.dart';
-
-enum ModoTimesheet { semanal, mensal }
+import 'package:tarefas_calendario/features/timesheet/domain/enums/modo_timesheet.dart';
+import 'package:tarefas_calendario/features/timesheet/domain/usecases/busca_tarefas_periodo_usecase.dart';
+import 'package:tarefas_calendario/features/timesheet/domain/usecases/exportar_timesheet_usecase.dart';
 
 class TimesheetViewModel extends ChangeNotifier {
-  final ITarefaRepository _repository;
-
-  TimesheetViewModel(this._repository);
+  final BuscarTarefasPeriodoUsecase _buscarTarefas;
+  final ExportarTimesheetUsecase _exportarTimesheet;
 
   ModoTimesheet _modo = ModoTimesheet.semanal;
   DateTime _referencia = DateTime.now();
   Map<DateTime, List<TarefaEntity>> _tarefasPorDia = {};
   bool _carregando = false;
+
+  TimesheetViewModel({
+    required BuscarTarefasPeriodoUsecase buscarTarefas,
+    required ExportarTimesheetUsecase exportarTimesheet,
+  }) : _buscarTarefas = buscarTarefas,
+       _exportarTimesheet = exportarTimesheet;
 
   ModoTimesheet get modo => _modo;
   Map<DateTime, List<TarefaEntity>> get tarefasPorDia => _tarefasPorDia;
@@ -30,7 +32,7 @@ class TimesheetViewModel extends ChangeNotifier {
       ? AppDateUtils.fimSemana(_referencia)
       : AppDateUtils.fimDoMes(_referencia);
 
-  int get totalMinutosPeriodo => tarefasPorDia.values
+  int get totalMinutosPeriodo => _tarefasPorDia.values
       .expand((tarefas) => tarefas)
       .fold(0, (soma, t) => soma + (t.horasGastas * 60) + t.minutosGastos);
 
@@ -40,11 +42,6 @@ class TimesheetViewModel extends ChangeNotifier {
     if (minutos == 0) return '${horas}h';
     if (horas == 0) return '${minutos}m';
     return '${horas}h ${minutos}m';
-  }
-
-  set carregando(bool valor) {
-    _carregando = valor;
-    notifyListeners();
   }
 
   Future<void> init() async {
@@ -75,77 +72,36 @@ class TimesheetViewModel extends ChangeNotifier {
     await _carregarTarefas();
   }
 
-  Future<String?> exportarMd() async {
-    try {
-      final buffer = StringBuffer();
+  Future<String?> exportarMd() => _exportarTimesheet(
+    tarefasPorDia: _tarefasPorDia,
+    inicioPeriodo: inicioPeriodo,
+    fimPeriodo: fimPeriodo,
+    modo: _modo,
+    totalFormatado: totalFormatadoPeriodo,
+  );
 
-      // Título e total
-      final titulo = modo == ModoTimesheet.semanal
-          ? '# Semana ${AppDateUtils.formatarDiaMes(inicioPeriodo)} - ${AppDateUtils.formatarDiaMes(fimPeriodo)} de ${fimPeriodo.year}'
-          : '# ${AppDateUtils.formatarMesAno(inicioPeriodo)}';
-
-      buffer.writeln(titulo);
-      buffer.writeln('**Total: $totalFormatadoPeriodo**');
-      buffer.writeln();
-
-      // Dias do período
-      var dia = inicioPeriodo;
-      while (!dia.isAfter(fimPeriodo)) {
-        final chave = DateTime(dia.year, dia.month, dia.day);
-        final tarefas = tarefasPorDia[chave] ?? [];
-
-        buffer.writeln('## ${AppDateUtils.formatarDiaCurto(dia)}');
-
-        if (tarefas.isEmpty) {
-          buffer.writeln('_Sem registros_');
-        } else {
-          for (final t in tarefas) {
-            final horas = t.horasGastas == 0 ? '' : '${t.horasGastas}h ';
-            final minutos = t.minutosGastos == 0 ? '' : '${t.minutosGastos}m';
-            buffer.writeln('- $horas$minutos— ${t.titulo}');
-          }
-        }
-        buffer.writeln();
-        dia = dia.add(const Duration(days: 1));
-      }
-
-      // Salva em Downloads
-      final downloadsDir = await getDownloadsDirectory();
-      if (downloadsDir == null) return null;
-
-      final nomeArquivo = modo == ModoTimesheet.semanal
-          ? 'timesheet_semana_${inicioPeriodo.year}-${inicioPeriodo.month.toString().padLeft(2, '0')}-${inicioPeriodo.day.toString().padLeft(2, '0')}.md'
-          : 'timesheet_mes_${inicioPeriodo.year}-${inicioPeriodo.month.toString().padLeft(2, '0')}.md';
-
-      final arquivo = File('${downloadsDir.path}/$nomeArquivo');
-      await arquivo.writeAsString(buffer.toString());
-
-      return arquivo.path;
-    } catch (_) {
-      return null;
+  List<DateTime> calcularDiasDoPeriodo() {
+    final dias = <DateTime>[];
+    var dia = inicioPeriodo;
+    while (!dia.isAfter(fimPeriodo)) {
+      dias.add(dia);
+      dia = dia.add(const Duration(days: 1));
     }
+    return dias;
+  }
+
+  List<TarefaEntity> tarefasDoDia(DateTime dia) {
+    final chave = DateTime(dia.year, dia.month, dia.day);
+    return _tarefasPorDia[chave] ?? [];
   }
 
   Future<void> _carregarTarefas() async {
-    carregando = true;
+    _carregando = true;
+    notifyListeners();
 
-    final tarefas = await _repository.buscarPorPeriodo(
-      inicioPeriodo,
-      fimPeriodo,
-    );
+    _tarefasPorDia = await _buscarTarefas(inicioPeriodo, fimPeriodo);
 
-    // Agrupa as tarefas por dia zerando hora/minuto/segundo para comparação correta
-    final mapa = <DateTime, List<TarefaEntity>>{};
-    for (final tarefa in tarefas) {
-      final dia = DateTime(
-        tarefa.data.year,
-        tarefa.data.month,
-        tarefa.data.day,
-      );
-      mapa.putIfAbsent(dia, () => []).add(tarefa);
-    }
-
-    _tarefasPorDia = mapa;
-    carregando = false;
+    _carregando = false;
+    notifyListeners();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tarefas_calendario/core/utils/date_utils.dart';
+import 'package:tarefas_calendario/core/utils/app_utils.dart';
+import 'package:tarefas_calendario/features/timesheet/domain/enums/modo_timesheet.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/viewmodels/timesheet_viewmodel.dart';
 
 class TimesheetHeaderWidget extends StatelessWidget {

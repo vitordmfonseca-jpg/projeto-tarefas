@@ -58,4 +58,12 @@ abstract final class AppDateUtils {
   static DateTime fimDoMes(DateTime data) {
     return DateTime(data.year, data.month + 1, 0);
   }
+
+  //Verifica qual é o dia de hj
+  static bool isHoje(DateTime data) {
+    final hoje = DateTime.now();
+    return data.year == hoje.year &&
+        data.month == hoje.month &&
+        data.day == hoje.day;
+  }
 }

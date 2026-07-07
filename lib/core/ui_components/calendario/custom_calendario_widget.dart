@@ -8,9 +8,14 @@ class CustomCalendarioWidget extends StatefulWidget {
     super.key,
     required this.mesAtual,
     required this.diaSelecionado,
+    this.diasComRegistro = const {},
+    this.onMesAlterado,
   });
+
   final DateTime mesAtual;
   final void Function(DateTime diaSelec) diaSelecionado;
+  final Set<DateTime> diasComRegistro;
+  final void Function(int mes, int ano)? onMesAlterado;
 
   @override
   State<CustomCalendarioWidget> createState() => _CustomCalendarioWidgetState();
@@ -23,6 +28,7 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
   @override
   void initState() {
     super.initState();
+
     _viewModel
       ..diaSelecionado = _mesAtual
       ..diasDoMes(_mesAtual);
@@ -59,7 +65,13 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                   Padding(
                     padding: const EdgeInsets.only(right: 32.0),
                     child: IconButton(
-                      onPressed: () => _viewModel.mesAnterior(),
+                      onPressed: () {
+                        _viewModel.mesAnterior();
+                        widget.onMesAlterado?.call(
+                          _mesAtual.month,
+                          _mesAtual.year,
+                        );
+                      },
                       icon: Icon(
                         Icons.arrow_back,
                         color: colorScheme.onPrimary,
@@ -75,6 +87,10 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                       IconButton(
                         onPressed: () {
                           _viewModel.irParaHoje();
+                          widget.onMesAlterado?.call(
+                            _mesAtual.month,
+                            _mesAtual.year,
+                          );
                           widget.diaSelecionado(DateTime.now());
                         },
                         icon: Icon(
@@ -84,7 +100,13 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                         tooltip: 'Hoje',
                       ),
                       IconButton(
-                        onPressed: () => _viewModel.proxMes(),
+                        onPressed: () {
+                          _viewModel.proxMes();
+                          widget.onMesAlterado?.call(
+                            _mesAtual.month,
+                            _mesAtual.year,
+                          );
+                        },
                         icon: Icon(
                           Icons.arrow_forward,
                           color: colorScheme.onPrimary,
@@ -110,7 +132,9 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                               e,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: colorScheme.onSurface.withOpacity(0.6),
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                               ),
@@ -128,10 +152,14 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                           children: List.generate(7, (idxDia) {
                             final idxDiaSemana = (idxSemana * 7) + idxDia;
                             final dia = _viewModel.diasMes[idxDiaSemana];
-
                             final isDiaSelecionado =
                                 _viewModel.diaSelecionado?.isMesmoDia(dia) ??
                                 false;
+                            final chave = DateTime(
+                              dia.year,
+                              dia.month,
+                              dia.day,
+                            );
 
                             return Expanded(
                               child: _CalendarioDiaWidget(
@@ -140,6 +168,9 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                                 isMesAtual:
                                     dia.month == _viewModel.mesAtual.month,
                                 isHoje: DateTime.now().isMesmoDia(dia),
+                                temRegistro: widget.diasComRegistro.contains(
+                                  chave,
+                                ),
                                 selecionaDia: () {
                                   _viewModel.diaSelecionado = dia;
                                   widget.diaSelecionado(dia);
@@ -167,6 +198,7 @@ class _CalendarioDiaWidget extends StatelessWidget {
     required this.isDiaSelecionado,
     required this.isMesAtual,
     required this.isHoje,
+    required this.temRegistro,
     required this.selecionaDia,
   });
 
@@ -174,24 +206,25 @@ class _CalendarioDiaWidget extends StatelessWidget {
   final bool isDiaSelecionado;
   final bool isMesAtual;
   final bool isHoje;
+  final bool temRegistro;
   final void Function() selecionaDia;
+
+  Color? _corFundo(ColorScheme colorScheme) {
+    if (isDiaSelecionado) return colorScheme.primary;
+    if (isHoje) return colorScheme.secondary;
+    return null;
+  }
+
+  Color _corTexto(ColorScheme colorScheme) {
+    if (isDiaSelecionado) return colorScheme.onPrimary;
+    if (isHoje) return colorScheme.onSecondary;
+    if (isMesAtual) return colorScheme.onSurface;
+    return colorScheme.onSurface.withValues(alpha: 0.3);
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    Color? corFundo() {
-      if (isDiaSelecionado) return colorScheme.primary;
-      if (isHoje) return colorScheme.secondary;
-      return null;
-    }
-
-    Color corTexto() {
-      if (isDiaSelecionado) return colorScheme.onPrimary;
-      if (isHoje) return colorScheme.onSecondary;
-      if (isMesAtual) return colorScheme.onSurface;
-      return colorScheme.onSurface.withOpacity(0.3);
-    }
 
     return Material(
       color: Colors.transparent,
@@ -201,18 +234,41 @@ class _CalendarioDiaWidget extends StatelessWidget {
         overlayColor: WidgetStateProperty.all(
           colorScheme.primary.withValues(alpha: 0.08),
         ),
-        child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              color: corFundo(),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                dia.day.toString(),
-                style: TextStyle(fontSize: 16.0, color: corTexto()),
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: _corFundo(colorScheme),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Stack(
+            children: [
+              Center(
+                child: Text(
+                  dia.day.toString(),
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: _corTexto(colorScheme),
+                  ),
+                ),
               ),
-            ),
+              if (temRegistro && !isDiaSelecionado)
+                Positioned(
+                  bottom: 10,
+                  right: 10,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+
+                    decoration: BoxDecoration(
+                      color: isHoje
+                          ? colorScheme.onSecondary
+                          : colorScheme.secondary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),
