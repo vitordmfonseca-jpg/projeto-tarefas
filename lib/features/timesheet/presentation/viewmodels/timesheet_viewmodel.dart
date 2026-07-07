@@ -50,6 +50,7 @@ class TimesheetViewModel extends ChangeNotifier {
 
   Future<void> alternarModo(ModoTimesheet modo) async {
     _modo = modo;
+    _referencia = DateTime.now();
     await _carregarTarefas();
   }
 

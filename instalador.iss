@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "Calendario de Tarefas"
-#define MyAppVersion "1.0.12"
+#define MyAppVersion "1.0.13"
 #define MyAppPublisher "Vitor D M Fonseca"
 #define MyAppURL "https://www.example.com/"
 #define MyAppExeName "tarefas_calendario.exe"
