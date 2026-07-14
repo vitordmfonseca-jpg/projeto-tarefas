@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/core/ui_components/calendario/custom_calendario_widget.dart';
-import 'package:tarefas_calendario/features/tarefas/data/database_helper.dart';
-import 'package:tarefas_calendario/features/tarefas/data/datasources/tarefa_datasource.dart';
-import 'package:tarefas_calendario/features/tarefas/data/repositories/tarefa_repository.dart';
-import 'package:tarefas_calendario/features/tarefas/domain/usecases/busca_dias_com_registro_usecase.dart';
+import 'package:tarefas_calendario/features/tarefas/presentation/actions/tarefas_action.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/viewmodels/tarefas_viewmodel.dart';
 import 'package:tarefas_calendario/features/tarefas/presentation/widgets/painel_tarefas_widget.dart';
 
 class TarefasPage extends StatefulWidget {
-  const TarefasPage({super.key});
+  final TarefasViewModel viewModel;
+  final TarefasAction action;
+
+  const TarefasPage({super.key, required this.viewModel, required this.action});
 
   @override
   State<TarefasPage> createState() => _TarefasPageState();
 }
 
 class _TarefasPageState extends State<TarefasPage> {
-  late final TarefasViewModel _vm;
+  TarefasViewModel get _vm => widget.viewModel;
 
   @override
   void initState() {
     super.initState();
-    final dbHelper = DatabaseHelper.instance;
-    final datasource = TarefaDatasource(dbHelper);
-    final repository = TarefaRepository(datasource);
-    final buscaDiasRegistro = BuscarDiasComRegistroUsecase(repository);
-    _vm = TarefasViewModel(repository, buscaDiasRegistro);
     _vm.carregarMeta();
     _vm.selecionarDia(DateTime.now());
     _vm.carregarDiasDoMes(DateTime.now().month, DateTime.now().year);
@@ -57,7 +52,9 @@ class _TarefasPageState extends State<TarefasPage> {
               },
             ),
           ),
-          Flexible(child: PainelTarefasWidget(vm: _vm)),
+          Flexible(
+            child: PainelTarefasWidget(vm: _vm, action: widget.action),
+          ),
         ],
       ),
     );

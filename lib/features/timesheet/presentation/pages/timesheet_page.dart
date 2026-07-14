@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tarefas_calendario/features/tarefas/data/database_helper.dart';
-import 'package:tarefas_calendario/features/tarefas/data/datasources/tarefa_datasource.dart';
-import 'package:tarefas_calendario/features/tarefas/data/repositories/tarefa_repository.dart';
-import 'package:tarefas_calendario/features/timesheet/domain/usecases/busca_tarefas_periodo_usecase.dart';
-import 'package:tarefas_calendario/features/timesheet/domain/usecases/exportar_timesheet_usecase.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/viewmodels/timesheet_viewmodel.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/widgets/timesheet_grade_widget.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/widgets/timesheet_header_widget.dart';
@@ -49,27 +44,20 @@ class _RodapeTotalWidget extends StatelessWidget {
 }
 
 class TimesheetPage extends StatefulWidget {
-  const TimesheetPage({super.key});
+  final TimesheetViewModel viewModel;
+
+  const TimesheetPage({super.key, required this.viewModel});
 
   @override
   State<TimesheetPage> createState() => TimesheetPageState();
 }
 
 class TimesheetPageState extends State<TimesheetPage> {
-  late final TimesheetViewModel _vm;
+  TimesheetViewModel get _vm => widget.viewModel;
 
   @override
   void initState() {
     super.initState();
-    final dbHelper = DatabaseHelper.instance;
-    final datasource = TarefaDatasource(dbHelper);
-    final repository = TarefaRepository(datasource);
-    final buscarTarefas = BuscarTarefasPeriodoUsecase(repository);
-    final exportarTimesheet = ExportarTimesheetUsecase();
-    _vm = TimesheetViewModel(
-      buscarTarefas: buscarTarefas,
-      exportarTimesheet: exportarTimesheet,
-    );
     _vm.init();
   }
 
@@ -78,9 +66,6 @@ class TimesheetPageState extends State<TimesheetPage> {
     _vm.dispose();
     super.dispose();
   }
-
-  // Chamado pela HomePage ao selecionar a aba do Timesheet
-  Future<void> refresh() => _vm.init();
 
   @override
   Widget build(BuildContext context) {

@@ -69,22 +69,28 @@ class _TimesheetMensalWidget extends StatelessWidget {
         final larguraCelula = (larguraTotal - 6 * espacoEntreItens) / 7;
         final ratio = larguraCelula / alturaCelula;
 
-        return GridView.count(
-          crossAxisCount: 7,
-          crossAxisSpacing: espacoEntreItens,
-          mainAxisSpacing: espacoEntreItens,
-          childAspectRatio: ratio,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: dias
-              .map(
-                (dia) => TimesheetDiaCellWidget(
-                  dia: dia,
-                  tarefas: vm.tarefasDoDia(dia),
-                  isHoje: AppDateUtils.isHoje(dia),
-                ),
-              )
-              .toList(),
+        return ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: GridView.count(
+            crossAxisCount: 7,
+            crossAxisSpacing: espacoEntreItens,
+            mainAxisSpacing: espacoEntreItens,
+            childAspectRatio: ratio,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: dias
+                .map(
+                  (dia) => TimesheetDiaCellWidget(
+                    dia: dia,
+                    tarefas: vm.tarefasDoDia(dia),
+                    isHoje: AppDateUtils.isHoje(dia),
+                    isMesAtual:
+                        dia.month == vm.inicioPeriodo.month &&
+                        dia.year == vm.inicioPeriodo.year,
+                  ),
+                )
+                .toList(),
+          ),
         );
       },
     );

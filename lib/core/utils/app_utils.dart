@@ -59,6 +59,19 @@ abstract final class AppDateUtils {
     return DateTime(data.year, data.month + 1, 0);
   }
 
+  /// Retorna o primeiro dia exibido na grade do calendário (42 células),
+  /// ou seja, a segunda-feira anterior (ou igual) ao dia 1 do mês.
+  static DateTime inicioGradeCalendario(DateTime mesRef) {
+    final primeiroDia = DateTime(mesRef.year, mesRef.month, 1);
+    final espacoDia = primeiroDia.weekday - 1;
+    return primeiroDia.subtract(Duration(days: espacoDia));
+  }
+
+  /// Retorna o último dia exibido na grade do calendário (42 células).
+  static DateTime fimGradeCalendario(DateTime mesRef) {
+    return inicioGradeCalendario(mesRef).add(const Duration(days: 41));
+  }
+
   //Verifica qual é o dia de hj
   static bool isHoje(DateTime data) {
     final hoje = DateTime.now();

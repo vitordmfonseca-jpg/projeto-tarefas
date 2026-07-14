@@ -34,6 +34,19 @@ class TarefasViewModel extends ChangeNotifier {
     return '${horas}h ${minutos}m';
   }
 
+  double get progressoMeta =>
+      (totalMinutosDia / metaMinutosDia).clamp(0.0, 1.0);
+
+  bool get bateuMeta => totalMinutosDia >= metaMinutosDia;
+
+  String get textoMeta {
+    if (bateuMeta) return 'Meta atingida!';
+    final minutosRestantes = metaMinutosDia - totalMinutosDia;
+    final horasRest = minutosRestantes ~/ 60;
+    final minRest = minutosRestantes % 60;
+    return 'Faltam ${horasRest > 0 ? '${horasRest}h ' : ''}${minRest}m';
+  }
+
   Future<void> carregarMeta() async {
     final prefs = await SharedPreferences.getInstance();
     final horas = prefs.getInt('meta_horas') ?? 8;

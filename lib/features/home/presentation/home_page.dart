@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/core/ui_components/sidebar/sidebar_widget.dart';
-import 'package:tarefas_calendario/features/configuracoes/presentation/pages/configuracoes_page.dart';
-import 'package:tarefas_calendario/features/tarefas/presentation/pages/tarefas_page.dart';
-import 'package:tarefas_calendario/features/timesheet/presentation/pages/timesheet_page.dart';
+import 'package:tarefas_calendario/di/factories/configuracoes_factory.dart';
+import 'package:tarefas_calendario/di/factories/tarefas_factory.dart';
+import 'package:tarefas_calendario/di/factories/timesheet_factory.dart';
 
 class HomePage extends StatefulWidget {
   final ValueNotifier<ThemeMode> temaNotifier;
@@ -16,8 +16,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _indiceSelecionado = 0;
   bool _sidebarExpandida = false;
+  late Widget _paginaAtual;
 
   static const double _larguraSidebarRecolhida = 64.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _paginaAtual = _criarPagina(_indiceSelecionado);
+  }
+
+  Widget _criarPagina(int indice) => switch (indice) {
+    0 => TarefasFactory.create(),
+    1 => TimesheetFactory.create(),
+    2 => ConfiguracoesFactory.create(temaNotifier: widget.temaNotifier),
+    _ => const SizedBox.shrink(),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +41,11 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
-          // Conteúdo — reconstruído a cada troca de aba
           Positioned.fill(
             left: _larguraSidebarRecolhida,
-            child: switch (_indiceSelecionado) {
-              0 => const TarefasPage(),
-              1 => const TimesheetPage(),
-              2 => ConfiguracoesPage(temaNotifier: widget.temaNotifier),
-              _ => const SizedBox.shrink(),
-            },
+            child: _paginaAtual,
           ),
 
-          // Scrim
           Positioned.fill(
             left: _larguraSidebarRecolhida,
             child: IgnorePointer(
@@ -50,12 +57,17 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Sidebar
           Align(
             alignment: Alignment.centerLeft,
             child: SidebarWidget(
               indiceSelecionado: _indiceSelecionado,
-              onItemSelecionado: (i) => setState(() => _indiceSelecionado = i),
+              onItemSelecionado: (i) {
+                if (_indiceSelecionado == i) return;
+                setState(() {
+                  _indiceSelecionado = i;
+                  _paginaAtual = _criarPagina(i);
+                });
+              },
               onExpandida: (expandida) =>
                   setState(() => _sidebarExpandida = expandida),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tarefas_calendario/core/utils/app_utils.dart';
 
 class CustomCalendarioViewmodel extends ChangeNotifier {
   final diasSemana = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
@@ -34,15 +35,12 @@ class CustomCalendarioViewmodel extends ChangeNotifier {
 
   void diasDoMes(DateTime mesAtual) {
     _mesAtual = mesAtual;
-    final primeiroDia = DateTime(mesAtual.year, mesAtual.month, 1);
-    final diaSemana = primeiroDia.weekday;
-    final espacoDia = diaSemana - 1;
+    final inicioGrade = AppDateUtils.inicioGradeCalendario(mesAtual);
 
-    _diasMes = [];
-    for (var i = 0; i < 42; i++) {
-      final dia = i - espacoDia + 1;
-      _diasMes.add(DateTime(mesAtual.year, mesAtual.month, dia));
-    }
+    _diasMes = List.generate(
+      42,
+      (i) => inicioGrade.add(Duration(days: i)),
+    );
 
     notifyListeners();
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tarefas_calendario/core/utils/app_utils.dart';
 import 'package:tarefas_calendario/features/timesheet/domain/enums/modo_timesheet.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/viewmodels/timesheet_viewmodel.dart';
 
@@ -7,18 +6,6 @@ class TimesheetHeaderWidget extends StatelessWidget {
   final TimesheetViewModel vm;
 
   const TimesheetHeaderWidget({super.key, required this.vm});
-
-  String _tituloPeriodo() {
-    if (vm.modo == ModoTimesheet.semanal) {
-      final inicio = vm.inicioPeriodo;
-      final fim = vm.fimPeriodo;
-      if (inicio.month == fim.month) {
-        return '${inicio.day} - ${fim.day} de ${AppDateUtils.meses[inicio.month - 1]} de ${inicio.year}';
-      }
-      return '${inicio.day} ${AppDateUtils.meses[inicio.month - 1].substring(0, 3)} - ${fim.day} ${AppDateUtils.meses[fim.month - 1].substring(0, 3)} de ${fim.year}';
-    }
-    return AppDateUtils.formatarMesAno(vm.inicioPeriodo);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +27,7 @@ class TimesheetHeaderWidget extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            _tituloPeriodo(),
+            vm.tituloPeriodo,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
           const SizedBox(width: 12),

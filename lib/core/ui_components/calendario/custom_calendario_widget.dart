@@ -48,74 +48,22 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
         builder: (context, child) => Column(
           spacing: 16.0,
           children: [
-            Container(
-              padding: const EdgeInsets.all(4.0),
-              decoration: BoxDecoration(
-                gradient: Theme.of(
-                  context,
-                ).extension<AppGradient>()!.headerGradient,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 32.0),
-                    child: IconButton(
-                      onPressed: () {
-                        _viewModel.mesAnterior();
-                        widget.onMesAlterado?.call(
-                          _mesAtual.month,
-                          _mesAtual.year,
-                        );
-                      },
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: colorScheme.onPrimary,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '${_viewModel.mesAtual.formataMesPt().toUpperCase()} - ${_viewModel.mesAtual.year}',
-                    style: TextStyle(color: colorScheme.onPrimary),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          _viewModel.irParaHoje();
-                          widget.onMesAlterado?.call(
-                            _mesAtual.month,
-                            _mesAtual.year,
-                          );
-                          widget.diaSelecionado(DateTime.now());
-                        },
-                        icon: Icon(
-                          Icons.today_outlined,
-                          color: colorScheme.onPrimary,
-                        ),
-                        tooltip: 'Hoje',
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _viewModel.proxMes();
-                          widget.onMesAlterado?.call(
-                            _mesAtual.month,
-                            _mesAtual.year,
-                          );
-                        },
-                        icon: Icon(
-                          Icons.arrow_forward,
-                          color: colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            _CalendarioHeaderWidget(
+              mesFormatado:
+                  '${_viewModel.mesAtual.formataMesPt().toUpperCase()} - ${_viewModel.mesAtual.year}',
+              onMesAnterior: () {
+                _viewModel.mesAnterior();
+                widget.onMesAlterado?.call(_mesAtual.month, _mesAtual.year);
+              },
+              onHoje: () {
+                _viewModel.irParaHoje();
+                widget.onMesAlterado?.call(_mesAtual.month, _mesAtual.year);
+                widget.diaSelecionado(DateTime.now());
+              },
+              onProxMes: () {
+                _viewModel.proxMes();
+                widget.onMesAlterado?.call(_mesAtual.month, _mesAtual.year);
+              },
             ),
             Expanded(
               child: Padding(
@@ -192,6 +140,65 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
   }
 }
 
+class _CalendarioHeaderWidget extends StatelessWidget {
+  const _CalendarioHeaderWidget({
+    required this.mesFormatado,
+    required this.onMesAnterior,
+    required this.onHoje,
+    required this.onProxMes,
+  });
+
+  final String mesFormatado;
+  final VoidCallback onMesAnterior;
+  final VoidCallback onHoje;
+  final VoidCallback onProxMes;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(4.0),
+      decoration: BoxDecoration(
+        gradient: Theme.of(context).extension<AppGradient>()!.headerGradient,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 32.0),
+            child: IconButton(
+              onPressed: onMesAnterior,
+              icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
+            ),
+          ),
+          Text(mesFormatado, style: TextStyle(color: colorScheme.onPrimary)),
+          Row(
+            children: [
+              IconButton(
+                onPressed: onHoje,
+                icon: Icon(
+                  Icons.today_outlined,
+                  color: colorScheme.onPrimary,
+                ),
+                tooltip: 'Hoje',
+              ),
+              IconButton(
+                onPressed: onProxMes,
+                icon: Icon(Icons.arrow_forward, color: colorScheme.onPrimary),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _CalendarioDiaWidget extends StatelessWidget {
   const _CalendarioDiaWidget({
     required this.dia,
@@ -220,6 +227,12 @@ class _CalendarioDiaWidget extends StatelessWidget {
     if (isHoje) return colorScheme.onSecondary;
     if (isMesAtual) return colorScheme.onSurface;
     return colorScheme.onSurface.withValues(alpha: 0.3);
+  }
+
+  Color _corDot(ColorScheme colorScheme) {
+    if (isDiaSelecionado) return colorScheme.onPrimary;
+    if (isHoje) return colorScheme.onPrimary;
+    return colorScheme.secondary;
   }
 
   @override
@@ -252,7 +265,7 @@ class _CalendarioDiaWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              if (temRegistro && !isDiaSelecionado)
+              if (temRegistro)
                 Positioned(
                   bottom: 10,
                   right: 10,
@@ -261,9 +274,7 @@ class _CalendarioDiaWidget extends StatelessWidget {
                     height: 8,
 
                     decoration: BoxDecoration(
-                      color: isHoje
-                          ? colorScheme.onSecondary
-                          : colorScheme.secondary,
+                      color: _corDot(colorScheme),
                       shape: BoxShape.circle,
                     ),
                   ),

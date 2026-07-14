@@ -7,8 +7,8 @@ class BuscarDiasComRegistroUsecase {
   BuscarDiasComRegistroUsecase(this._repository);
 
   Future<Set<DateTime>> call(int mes, int ano) async {
-    final inicio = AppDateUtils.inicioDomes(DateTime(ano, mes));
-    final fim = AppDateUtils.fimDoMes(DateTime(ano, mes));
+    final inicio = AppDateUtils.inicioGradeCalendario(DateTime(ano, mes));
+    final fim = AppDateUtils.fimGradeCalendario(DateTime(ano, mes));
 
     final tarefas = await _repository.buscarPorPeriodo(inicio, fim);
 

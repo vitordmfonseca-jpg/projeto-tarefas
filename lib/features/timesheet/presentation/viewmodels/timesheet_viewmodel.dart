@@ -73,6 +73,18 @@ class TimesheetViewModel extends ChangeNotifier {
     await _carregarTarefas();
   }
 
+  String get tituloPeriodo {
+    if (_modo == ModoTimesheet.semanal) {
+      final inicio = inicioPeriodo;
+      final fim = fimPeriodo;
+      if (inicio.month == fim.month) {
+        return '${inicio.day} - ${fim.day} de ${AppDateUtils.meses[inicio.month - 1]} de ${inicio.year}';
+      }
+      return '${inicio.day} ${AppDateUtils.meses[inicio.month - 1].substring(0, 3)} - ${fim.day} ${AppDateUtils.meses[fim.month - 1].substring(0, 3)} de ${fim.year}';
+    }
+    return AppDateUtils.formatarMesAno(inicioPeriodo);
+  }
+
   Future<String?> exportarMd() => _exportarTimesheet(
     tarefasPorDia: _tarefasPorDia,
     inicioPeriodo: inicioPeriodo,
@@ -82,9 +94,16 @@ class TimesheetViewModel extends ChangeNotifier {
   );
 
   List<DateTime> calcularDiasDoPeriodo() {
+    final inicio = _modo == ModoTimesheet.mensal
+        ? AppDateUtils.inicioGradeCalendario(_referencia)
+        : inicioPeriodo;
+    final fim = _modo == ModoTimesheet.mensal
+        ? AppDateUtils.fimGradeCalendario(_referencia)
+        : fimPeriodo;
+
     final dias = <DateTime>[];
-    var dia = inicioPeriodo;
-    while (!dia.isAfter(fimPeriodo)) {
+    var dia = inicio;
+    while (!dia.isAfter(fim)) {
       dias.add(dia);
       dia = dia.add(const Duration(days: 1));
     }

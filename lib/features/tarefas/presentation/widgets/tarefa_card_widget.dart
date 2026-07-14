@@ -33,24 +33,32 @@ class TarefaCardWidget extends StatelessWidget {
         child: Tooltip(
           message: tarefa.titulo,
           child: ListTile(
-            leading: SizedBox(
-              width: 64,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.4),
+            leading: Tooltip(
+              message: _tempoFormatado,
+              child: SizedBox(
+                width: 80,
+                height: 35,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
                   ),
-                ),
-                child: Text(
-                  _tempoFormatado,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.primary,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: colorScheme.primary.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Text(
+                    _tempoFormatado,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
