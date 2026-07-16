@@ -36,7 +36,9 @@ class PainelTarefasWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _PainelHeaderWidget(vm: vm),
-                Expanded(child: _PainelListaWidget(vm: vm, action: action)),
+                Expanded(
+                  child: _PainelListaWidget(vm: vm, action: action),
+                ),
                 _PainelRodapeWidget(vm: vm, action: action),
               ],
             ),
@@ -66,6 +68,7 @@ class _PainelHeaderWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8.0,
         children: [
           Expanded(
             child: Column(
@@ -91,11 +94,14 @@ class _PainelHeaderWidget extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      '${vm.tarefas.length} tarefas registradas',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: colorScheme.onSurface.withValues(alpha: 0.5),
+                    Flexible(
+                      child: Text(
+                        '${vm.tarefas.length} tarefas registradas',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
@@ -103,7 +109,8 @@ class _PainelHeaderWidget extends StatelessWidget {
               ],
             ),
           ),
-          if (vm.tarefas.isNotEmpty) _TotalDiaBadgeWidget(vm: vm),
+          if (vm.tarefas.isNotEmpty)
+            Flexible(child: _TotalDiaBadgeWidget(vm: vm)),
         ],
       ),
     );
@@ -272,7 +279,9 @@ class _PainelRodapeWidget extends StatelessWidget {
                       alpha: 0.15,
                     ),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      vm.bateuMeta ? colorScheme.secondary : colorScheme.primary,
+                      vm.bateuMeta
+                          ? colorScheme.secondary
+                          : colorScheme.primary,
                     ),
                     minHeight: 6,
                   ),

@@ -15,6 +15,8 @@ class TarefaEntity {
     this.minutosGastos = 0,
   });
 
+  int get minutosTotais => (horasGastas * 60) + minutosGastos;
+
   TarefaEntity copyWith({
     int? id,
     String? titulo,

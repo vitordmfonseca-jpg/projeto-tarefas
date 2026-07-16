@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/features/configuracoes/data/datasources/configuracoes_datasource.dart';
 import 'package:tarefas_calendario/features/configuracoes/domain/entities/configuracoes_entity.dart';
+import 'package:tarefas_calendario/features/configuracoes/domain/enums/app_theme_mode.dart';
 import 'package:tarefas_calendario/features/configuracoes/domain/repositories/i_configuracoes_repository.dart';
 
 class ConfiguracoesRepository implements IConfiguracoesRepository {
@@ -8,25 +8,25 @@ class ConfiguracoesRepository implements IConfiguracoesRepository {
 
   ConfiguracoesRepository(this._datasource);
 
-  // Converte int salvo no banco para ThemeMode do Flutter
-  ThemeMode _toThemeMode(int value) => switch (value) {
-    1 => ThemeMode.light,
-    2 => ThemeMode.dark,
-    _ => ThemeMode.system,
+  // Converte int salvo no banco para AppThemeMode
+  AppThemeMode _toAppThemeMode(int value) => switch (value) {
+    1 => AppThemeMode.claro,
+    2 => AppThemeMode.escuro,
+    _ => AppThemeMode.sistema,
   };
 
-  // Converte ThemeMode para int para salvar no banco
-  int _fromThemeMode(ThemeMode mode) => switch (mode) {
-    ThemeMode.light => 1,
-    ThemeMode.dark => 2,
-    _ => 0,
+  // Converte AppThemeMode para int para salvar no banco
+  int _fromAppThemeMode(AppThemeMode mode) => switch (mode) {
+    AppThemeMode.claro => 1,
+    AppThemeMode.escuro => 2,
+    AppThemeMode.sistema => 0,
   };
 
   @override
   Future<ConfiguracoesEntity> carregar() async {
     final data = await _datasource.carregar();
     return ConfiguracoesEntity(
-      themeMode: _toThemeMode(data['themeMode'] as int),
+      themeMode: _toAppThemeMode(data['themeMode'] as int),
       metaHoras: data['metaHoras'] as int,
       metaMinutos: data['metaMinutos'] as int,
     );
@@ -35,7 +35,7 @@ class ConfiguracoesRepository implements IConfiguracoesRepository {
   @override
   Future<void> salvar(ConfiguracoesEntity configuracoes) async {
     await _datasource.salvar(
-      themeMode: _fromThemeMode(configuracoes.themeMode),
+      themeMode: _fromAppThemeMode(configuracoes.themeMode),
       metaHoras: configuracoes.metaHoras,
       metaMinutos: configuracoes.metaMinutos,
     );

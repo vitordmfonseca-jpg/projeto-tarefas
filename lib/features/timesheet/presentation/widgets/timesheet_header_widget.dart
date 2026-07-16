@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tarefas_calendario/core/extensions/ext_build_context.dart';
 import 'package:tarefas_calendario/features/timesheet/domain/enums/modo_timesheet.dart';
 import 'package:tarefas_calendario/features/timesheet/presentation/viewmodels/timesheet_viewmodel.dart';
 
@@ -54,24 +55,8 @@ class TimesheetHeaderWidget extends StatelessWidget {
             onPressed: () async {
               final caminho = await vm.exportarMd();
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    caminho != null
-                        ? 'Exportado para Downloads!'
-                        : 'Erro ao exportar.',
-                    style: TextStyle(color: colorScheme.onSurface),
-                  ),
-                  backgroundColor: colorScheme.surfaceContainer,
-                  behavior: SnackBarBehavior.floating,
-                  width: 300,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                      color: colorScheme.outline.withValues(alpha: 0.15),
-                    ),
-                  ),
-                ),
+              context.mostrarSnackBar(
+                caminho != null ? 'Exportado para Downloads!' : 'Erro ao exportar.',
               );
             },
             icon: const Icon(Icons.download_outlined, size: 20),

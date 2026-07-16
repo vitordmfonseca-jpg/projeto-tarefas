@@ -9,38 +9,22 @@ class ConfiguracoesAction {
 
   final ConfiguracoesViewModel _viewModel;
 
-  void _mostrarSnackBar(BuildContext context, String mensagem) {
-    if (!context.mounted) return;
-    final colorScheme = context.colorScheme;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(mensagem, style: TextStyle(color: colorScheme.onSurface)),
-        backgroundColor: colorScheme.surfaceContainer,
-        behavior: SnackBarBehavior.floating,
-        width: 300,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.15)),
-        ),
-      ),
-    );
-  }
-
   Future<void> salvarMeta(
     BuildContext context,
     String horasTexto,
     String minutosTexto,
   ) async {
-    await _viewModel.salvarMeta(horasTexto, minutosTexto);
+    final sucesso = await _viewModel.salvarMeta(horasTexto, minutosTexto);
     if (!context.mounted) return;
-    _mostrarSnackBar(context, 'Meta salva com sucesso!');
+    context.mostrarSnackBar(
+      sucesso ? 'Meta salva com sucesso!' : 'Erro ao salvar meta.',
+    );
   }
 
   Future<void> exportarBanco(BuildContext context) async {
     final caminho = await _viewModel.exportarBanco();
     if (!context.mounted) return;
-    _mostrarSnackBar(
-      context,
+    context.mostrarSnackBar(
       caminho != null ? 'Banco exportado para Downloads!' : 'Erro ao exportar.',
     );
   }
@@ -76,7 +60,7 @@ class ConfiguracoesAction {
 
     final sucesso = await _viewModel.importarBanco();
     if (!sucesso && context.mounted) {
-      _mostrarSnackBar(context, 'Erro ao importar banco.');
+      context.mostrarSnackBar('Erro ao importar banco.');
     }
   }
 }

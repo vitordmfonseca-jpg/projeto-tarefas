@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/core/utils/app_utils.dart';
+import 'package:tarefas_calendario/core/utils/duracao_utils.dart';
 import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
 
 class TimesheetDiaCellWidget extends StatelessWidget {
@@ -16,25 +17,12 @@ class TimesheetDiaCellWidget extends StatelessWidget {
     this.isMesAtual = true,
   });
 
-  int get _totalMinutos => tarefas.fold(
-    0,
-    (soma, t) => soma + (t.horasGastas * 60) + t.minutosGastos,
-  );
+  int get _totalMinutos => tarefas.fold(0, (soma, t) => soma + t.minutosTotais);
 
-  String get _totalFormatado {
-    final horas = _totalMinutos ~/ 60;
-    final minutos = _totalMinutos % 60;
-    if (_totalMinutos == 0) return '';
-    if (minutos == 0) return '${horas}h';
-    if (horas == 0) return '${minutos}m';
-    return '${horas}h ${minutos}m';
-  }
+  String get _totalFormatado =>
+      _totalMinutos == 0 ? '' : DuracaoUtils.formatar(_totalMinutos);
 
-  String _tempoTarefa(TarefaEntity t) {
-    if (t.horasGastas == 0) return '${t.minutosGastos}m';
-    if (t.minutosGastos == 0) return '${t.horasGastas}h';
-    return '${t.horasGastas}h ${t.minutosGastos}m';
-  }
+  String _tempoTarefa(TarefaEntity t) => DuracaoUtils.formatar(t.minutosTotais);
 
   @override
   Widget build(BuildContext context) {

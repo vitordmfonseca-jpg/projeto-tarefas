@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tarefas_calendario/core/ui_components/sidebar/aba_principal.dart';
 import 'package:tarefas_calendario/core/ui_components/sidebar/sidebar_widget.dart';
-import 'package:tarefas_calendario/di/factories/configuracoes_factory.dart';
-import 'package:tarefas_calendario/di/factories/tarefas_factory.dart';
-import 'package:tarefas_calendario/di/factories/timesheet_factory.dart';
+import 'package:tarefas_calendario/features/configuracoes/di/configuracoes_factory.dart';
+import 'package:tarefas_calendario/features/tarefas/di/tarefas_factory.dart';
+import 'package:tarefas_calendario/features/timesheet/di/timesheet_factory.dart';
 
 class HomePage extends StatefulWidget {
   final ValueNotifier<ThemeMode> temaNotifier;
@@ -14,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _indiceSelecionado = 0;
+  AbaPrincipal _abaSelecionada = AbaPrincipal.tarefas;
   bool _sidebarExpandida = false;
   late Widget _paginaAtual;
 
@@ -23,14 +24,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _paginaAtual = _criarPagina(_indiceSelecionado);
+    _paginaAtual = _criarPagina(_abaSelecionada);
   }
 
-  Widget _criarPagina(int indice) => switch (indice) {
-    0 => TarefasFactory.create(),
-    1 => TimesheetFactory.create(),
-    2 => ConfiguracoesFactory.create(temaNotifier: widget.temaNotifier),
-    _ => const SizedBox.shrink(),
+  Widget _criarPagina(AbaPrincipal aba) => switch (aba) {
+    AbaPrincipal.tarefas => TarefasFactory.create(),
+    AbaPrincipal.timesheet => TimesheetFactory.create(),
+    AbaPrincipal.configuracoes => ConfiguracoesFactory.create(
+      temaNotifier: widget.temaNotifier,
+    ),
   };
 
   @override
@@ -60,12 +62,12 @@ class _HomePageState extends State<HomePage> {
           Align(
             alignment: Alignment.centerLeft,
             child: SidebarWidget(
-              indiceSelecionado: _indiceSelecionado,
-              onItemSelecionado: (i) {
-                if (_indiceSelecionado == i) return;
+              abaSelecionada: _abaSelecionada,
+              onItemSelecionado: (aba) {
+                if (_abaSelecionada == aba) return;
                 setState(() {
-                  _indiceSelecionado = i;
-                  _paginaAtual = _criarPagina(i);
+                  _abaSelecionada = aba;
+                  _paginaAtual = _criarPagina(aba);
                 });
               },
               onExpandida: (expandida) =>

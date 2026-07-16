@@ -162,21 +162,20 @@ class _CampoTempoGastoWidget extends StatelessWidget {
     final colorScheme = context.colorScheme;
 
     return Container(
-      width: 80,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      constraints: BoxConstraints(maxWidth: 200.0),
       decoration: BoxDecoration(
         color: colorScheme.primary.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: colorScheme.primary.withValues(alpha: 0.4)),
       ),
-      child: Center(
-        child: Text(
-          tempoFormatado,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: colorScheme.primary,
-          ),
+      child: Text(
+        tempoFormatado,
+        maxLines: 1,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: colorScheme.primary,
         ),
       ),
     );

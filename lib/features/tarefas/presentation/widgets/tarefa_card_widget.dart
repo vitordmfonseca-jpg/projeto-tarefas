@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tarefas_calendario/core/utils/duracao_utils.dart';
 import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
 
 class TarefaCardWidget extends StatelessWidget {
@@ -15,11 +16,7 @@ class TarefaCardWidget extends StatelessWidget {
     required this.onDeletar,
   });
 
-  String get _tempoFormatado {
-    if (tarefa.horasGastas == 0) return '${tarefa.minutosGastos}m';
-    if (tarefa.minutosGastos == 0) return '${tarefa.horasGastas}h';
-    return '${tarefa.horasGastas}h ${tarefa.minutosGastos}m';
-  }
+  String get _tempoFormatado => DuracaoUtils.formatar(tarefa.minutosTotais);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +33,7 @@ class TarefaCardWidget extends StatelessWidget {
             leading: Tooltip(
               message: _tempoFormatado,
               child: SizedBox(
-                width: 80,
+                width: 70,
                 height: 35,
                 child: Container(
                   padding: const EdgeInsets.symmetric(

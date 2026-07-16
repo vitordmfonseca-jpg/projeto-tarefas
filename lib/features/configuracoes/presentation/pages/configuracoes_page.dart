@@ -121,15 +121,13 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                     _LinhaConfiguracaoWidget(
                       titulo: 'Caminho do banco de dados',
                       descricao: 'Local onde o arquivo do banco é armazenado',
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      trailing: Flexible(
-                        child: SelectableText(
-                          _vm.caminhoBanco,
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: colorScheme.onSurface.withValues(alpha: 0.6),
-                          ),
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      trailing: SelectableText(
+                        _vm.caminhoBanco,
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -244,7 +242,7 @@ class _SeletorTemaWidget extends StatelessWidget {
           icon: Icon(Icons.dark_mode_outlined, size: 16),
         ),
       ],
-      selected: {vm.configuracoes.themeMode},
+      selected: {vm.themeModeAtual},
       onSelectionChanged: (s) => vm.salvarTema(s.first),
     );
   }

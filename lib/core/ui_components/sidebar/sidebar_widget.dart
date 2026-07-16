@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tarefas_calendario/core/ui_components/sidebar/aba_principal.dart';
 import 'package:tarefas_calendario/core/ui_components/sidebar/sidebar_item_widget.dart';
 import 'package:yaml/yaml.dart';
 
 class SidebarWidget extends StatefulWidget {
-  final int indiceSelecionado;
-  final void Function(int) onItemSelecionado;
+  final AbaPrincipal abaSelecionada;
+  final void Function(AbaPrincipal) onItemSelecionado;
   final void Function(bool) onExpandida;
 
   const SidebarWidget({
     super.key,
-    required this.indiceSelecionado,
+    required this.abaSelecionada,
     required this.onItemSelecionado,
     required this.onExpandida,
   });
@@ -27,8 +28,16 @@ class _SidebarWidgetState extends State<SidebarWidget> {
   static const _larguraRecolhida = 64.0;
 
   static const _itens = [
-    (icone: Icons.calendar_month_outlined, label: 'Calendário'),
-    (icone: Icons.access_time_outlined, label: 'Timesheet'),
+    (
+      aba: AbaPrincipal.tarefas,
+      icone: Icons.calendar_month_outlined,
+      label: 'Calendário',
+    ),
+    (
+      aba: AbaPrincipal.timesheet,
+      icone: Icons.access_time_outlined,
+      label: 'Timesheet',
+    ),
   ];
 
   @override
@@ -73,13 +82,13 @@ class _SidebarWidgetState extends State<SidebarWidget> {
             children: [
               const SizedBox(height: 16),
 
-              ..._itens.asMap().entries.map(
-                (e) => SidebarItemWidget(
-                  icone: e.value.icone,
-                  label: e.value.label,
-                  selecionado: widget.indiceSelecionado == e.key,
+              ..._itens.map(
+                (item) => SidebarItemWidget(
+                  icone: item.icone,
+                  label: item.label,
+                  selecionado: widget.abaSelecionada == item.aba,
                   expandida: _expandida,
-                  onTap: () => widget.onItemSelecionado(e.key),
+                  onTap: () => widget.onItemSelecionado(item.aba),
                 ),
               ),
 
@@ -88,9 +97,9 @@ class _SidebarWidgetState extends State<SidebarWidget> {
               SidebarItemWidget(
                 icone: Icons.settings_outlined,
                 label: 'Configurações',
-                selecionado: widget.indiceSelecionado == 2,
+                selecionado: widget.abaSelecionada == AbaPrincipal.configuracoes,
                 expandida: _expandida,
-                onTap: () => widget.onItemSelecionado(2),
+                onTap: () => widget.onItemSelecionado(AbaPrincipal.configuracoes),
               ),
 
               Divider(

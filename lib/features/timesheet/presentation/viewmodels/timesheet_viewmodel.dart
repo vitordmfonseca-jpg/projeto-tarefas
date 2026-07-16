@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tarefas_calendario/core/utils/app_utils.dart';
+import 'package:tarefas_calendario/core/utils/duracao_utils.dart';
 import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
 import 'package:tarefas_calendario/features/timesheet/domain/enums/modo_timesheet.dart';
 import 'package:tarefas_calendario/features/timesheet/domain/usecases/busca_tarefas_periodo_usecase.dart';
@@ -13,6 +14,7 @@ class TimesheetViewModel extends ChangeNotifier {
   DateTime _referencia = DateTime.now();
   Map<DateTime, List<TarefaEntity>> _tarefasPorDia = {};
   bool _carregando = false;
+  String? _erro;
 
   TimesheetViewModel({
     required BuscarTarefasPeriodoUsecase buscarTarefas,
@@ -23,6 +25,12 @@ class TimesheetViewModel extends ChangeNotifier {
   ModoTimesheet get modo => _modo;
   Map<DateTime, List<TarefaEntity>> get tarefasPorDia => _tarefasPorDia;
   bool get carregando => _carregando;
+  String? get erro => _erro;
+
+  void _setCarregando(bool valor) {
+    _carregando = valor;
+    notifyListeners();
+  }
 
   DateTime get inicioPeriodo => _modo == ModoTimesheet.semanal
       ? AppDateUtils.inicioSemana(_referencia)
@@ -34,15 +42,9 @@ class TimesheetViewModel extends ChangeNotifier {
 
   int get totalMinutosPeriodo => _tarefasPorDia.values
       .expand((tarefas) => tarefas)
-      .fold(0, (soma, t) => soma + (t.horasGastas * 60) + t.minutosGastos);
+      .fold(0, (soma, t) => soma + t.minutosTotais);
 
-  String get totalFormatadoPeriodo {
-    final horas = totalMinutosPeriodo ~/ 60;
-    final minutos = totalMinutosPeriodo % 60;
-    if (minutos == 0) return '${horas}h';
-    if (horas == 0) return '${minutos}m';
-    return '${horas}h ${minutos}m';
-  }
+  String get totalFormatadoPeriodo => DuracaoUtils.formatar(totalMinutosPeriodo);
 
   Future<void> init() async {
     await _carregarTarefas();
@@ -116,12 +118,14 @@ class TimesheetViewModel extends ChangeNotifier {
   }
 
   Future<void> _carregarTarefas() async {
-    _carregando = true;
-    notifyListeners();
-
-    _tarefasPorDia = await _buscarTarefas(inicioPeriodo, fimPeriodo);
-
-    _carregando = false;
-    notifyListeners();
+    _setCarregando(true);
+    try {
+      _tarefasPorDia = await _buscarTarefas(inicioPeriodo, fimPeriodo);
+      _erro = null;
+    } catch (_) {
+      _erro = 'Não foi possível carregar as tarefas do período';
+    } finally {
+      _setCarregando(false);
+    }
   }
 }

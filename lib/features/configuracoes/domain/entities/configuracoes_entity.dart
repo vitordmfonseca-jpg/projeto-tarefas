@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:tarefas_calendario/features/configuracoes/domain/enums/app_theme_mode.dart';
 
 class ConfiguracoesEntity {
-  final ThemeMode themeMode;
+  final AppThemeMode themeMode;
   final int metaHoras;
   final int metaMinutos;
 
   const ConfiguracoesEntity({
-    this.themeMode = ThemeMode.system,
+    this.themeMode = AppThemeMode.sistema,
     this.metaHoras = 8,
     this.metaMinutos = 50,
   });
 
   ConfiguracoesEntity copyWith({
-    ThemeMode? themeMode,
+    AppThemeMode? themeMode,
     int? metaHoras,
     int? metaMinutos,
   }) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tarefas_calendario/core/utils/duracao_utils.dart';
 import 'package:tarefas_calendario/features/tarefas/domain/entities/tarefa_entity.dart';
 
 class DialogAdicionarTarefaViewModel extends ChangeNotifier {
@@ -13,9 +14,7 @@ class DialogAdicionarTarefaViewModel extends ChangeNotifier {
     final horas = int.tryParse(horasCtrl.text) ?? 0;
     final minutos = int.tryParse(minutosCtrl.text) ?? 0;
     if (horas == 0 && minutos == 0) return '—';
-    if (horas == 0) return '${minutos}m';
-    if (minutos == 0) return '${horas}h';
-    return '${horas}h ${minutos}m';
+    return DuracaoUtils.formatar((horas * 60) + minutos);
   }
 
   void inicializar(TarefaEntity? tarefa) {
@@ -29,11 +28,15 @@ class DialogAdicionarTarefaViewModel extends ChangeNotifier {
         : '';
   }
 
+  bool _falhaValidacao(String mensagem) {
+    erro = mensagem;
+    notifyListeners();
+    return false;
+  }
+
   bool validar() {
     if (tituloCtrl.text.trim().isEmpty) {
-      erro = 'Informe o título da tarefa';
-      notifyListeners();
-      return false;
+      return _falhaValidacao('Informe o título da tarefa');
     }
 
     final horas = horasCtrl.text.isEmpty ? 0 : int.tryParse(horasCtrl.text);
@@ -42,21 +45,15 @@ class DialogAdicionarTarefaViewModel extends ChangeNotifier {
         : int.tryParse(minutosCtrl.text);
 
     if (horas == null || horas < 0) {
-      erro = 'Informe um valor válido para horas';
-      notifyListeners();
-      return false;
+      return _falhaValidacao('Informe um valor válido para horas');
     }
 
     if (minutos == null || minutos < 0 || minutos > 59) {
-      erro = 'Minutos deve ser entre 0 e 59';
-      notifyListeners();
-      return false;
+      return _falhaValidacao('Minutos deve ser entre 0 e 59');
     }
 
     if (horas == 0 && minutos == 0) {
-      erro = 'Informe pelo menos alguns minutos gastos';
-      notifyListeners();
-      return false;
+      return _falhaValidacao('Informe pelo menos alguns minutos gastos');
     }
 
     erro = null;

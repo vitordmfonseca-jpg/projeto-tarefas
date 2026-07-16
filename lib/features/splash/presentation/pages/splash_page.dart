@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:tarefas_calendario/features/configuracoes/data/datasources/configuracoes_datasource.dart';
+import 'package:tarefas_calendario/features/configuracoes/data/repositories/configuracoes_repository.dart';
+import 'package:tarefas_calendario/features/configuracoes/domain/enums/app_theme_mode.dart';
 import 'package:tarefas_calendario/features/home/presentation/home_page.dart';
 import 'package:tarefas_calendario/main.dart';
 
@@ -40,13 +42,12 @@ class _SplashPageState extends State<SplashPage> {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
 
-    // Carrega tema salvo antes de navegar para HomePage
-    final prefs = await SharedPreferences.getInstance();
-    final temaInt = prefs.getInt('theme_mode') ?? 0;
-    temaNotifier.value = switch (temaInt) {
-      1 => ThemeMode.light,
-      2 => ThemeMode.dark,
-      _ => ThemeMode.system,
+    final repository = ConfiguracoesRepository(ConfiguracoesDatasource());
+    final configuracoes = await repository.carregar();
+    temaNotifier.value = switch (configuracoes.themeMode) {
+      AppThemeMode.claro => ThemeMode.light,
+      AppThemeMode.escuro => ThemeMode.dark,
+      AppThemeMode.sistema => ThemeMode.system,
     };
   }
 

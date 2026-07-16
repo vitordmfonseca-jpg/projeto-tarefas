@@ -24,7 +24,12 @@ class TarefasAction {
         modo: modo,
       ),
     );
-    if (resultado != null) await _viewModel.salvar(resultado);
+    if (resultado == null) return;
+
+    final sucesso = await _viewModel.salvar(resultado);
+    if (!sucesso && context.mounted) {
+      context.mostrarSnackBar('Erro ao salvar tarefa.');
+    }
   }
 
   Future<void> deletarTarefa(BuildContext context, TarefaEntity tarefa) async {
@@ -54,6 +59,11 @@ class TarefasAction {
         ],
       ),
     );
-    if (confirmar == true) await _viewModel.deletar(tarefa.id!);
+    if (confirmar != true) return;
+
+    final sucesso = await _viewModel.deletar(tarefa.id!);
+    if (!sucesso && context.mounted) {
+      context.mostrarSnackBar('Erro ao excluir tarefa.');
+    }
   }
 }
