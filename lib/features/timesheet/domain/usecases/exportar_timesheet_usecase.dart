@@ -17,7 +17,6 @@ class ExportarTimesheetUsecase {
     try {
       final buffer = StringBuffer();
 
-      // Título
       final titulo = modo == ModoTimesheet.semanal
           ? '# Semana ${AppDateUtils.formatarDiaMes(inicioPeriodo)} - ${AppDateUtils.formatarDiaMes(fimPeriodo)} de ${fimPeriodo.year}'
           : '# ${AppDateUtils.formatarMesAno(inicioPeriodo)}';
@@ -26,7 +25,6 @@ class ExportarTimesheetUsecase {
       buffer.writeln('**Total: $totalFormatado**');
       buffer.writeln();
 
-      // Itera os dias do período
       var dia = inicioPeriodo;
       while (!dia.isAfter(fimPeriodo)) {
         final chave = DateTime(dia.year, dia.month, dia.day);

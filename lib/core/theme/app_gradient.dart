@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 
 /// Extensão de tema customizada para gradientes do app.
-/// A cor base sempre vem do primary do tema — se o primary mudar, o gradiente acompanha.
-/// Acessível via Theme.of(context).extension<AppGradient>()!
 class AppGradient extends ThemeExtension<AppGradient> {
   final LinearGradient headerGradient;
 

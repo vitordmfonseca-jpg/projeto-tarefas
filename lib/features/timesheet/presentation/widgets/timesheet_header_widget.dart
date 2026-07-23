@@ -32,7 +32,7 @@ class TimesheetHeaderWidget extends StatelessWidget {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
           const SizedBox(width: 12),
-          // Botão "Hoje" usa secondary
+
           OutlinedButton(
             onPressed: vm.irParaHoje,
             style: OutlinedButton.styleFrom(
@@ -56,7 +56,9 @@ class TimesheetHeaderWidget extends StatelessWidget {
               final caminho = await vm.exportarMd();
               if (!context.mounted) return;
               context.mostrarSnackBar(
-                caminho != null ? 'Exportado para Downloads!' : 'Erro ao exportar.',
+                caminho != null
+                    ? 'Exportado para Downloads!'
+                    : 'Erro ao exportar.',
               );
             },
             icon: const Icon(Icons.download_outlined, size: 20),

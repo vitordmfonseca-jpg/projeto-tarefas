@@ -8,13 +8,11 @@ import 'package:tarefas_calendario/features/splash/presentation/pages/splash_pag
 import 'package:window_manager/window_manager.dart'
     show WindowOptions, windowManager;
 
-// Notifier global — ouvido pelo MaterialApp para trocar o tema
 final temaNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // launchAtStartup configurado com valores fixos — não depende do PackageInfo
   launchAtStartup.setup(
     appName: 'Calendário de Tarefas',
     appPath: Platform.resolvedExecutable,
@@ -38,7 +36,7 @@ void main() async {
   runApp(
     ValueListenableBuilder<ThemeMode>(
       valueListenable: temaNotifier,
-      builder: (_, modo, __) => MaterialApp(
+      builder: (_, modo, _) => MaterialApp(
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: modo,

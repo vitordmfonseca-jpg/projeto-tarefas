@@ -30,8 +30,8 @@ class _SplashPageState extends State<SplashPage> {
 
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) => HomePage(temaNotifier: temaNotifier),
-        transitionsBuilder: (_, animation, __, child) =>
+        pageBuilder: (_, _, _) => HomePage(temaNotifier: temaNotifier),
+        transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
         transitionDuration: const Duration(milliseconds: 400),
       ),

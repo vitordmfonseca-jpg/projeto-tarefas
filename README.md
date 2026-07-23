@@ -5,7 +5,19 @@ Software desktop para Windows voltado ao registro diário de tarefas e controle 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows)
 
-<!-- TODO: adicionar screenshot ou gif do app aqui -->
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/tela_inicial_calendario.png" width="48%" alt="Calendário mensal com dias selecionados" />
+  <img src="docs/screenshots/tela_cadastro_calendario.png" width="48%" alt="Dialog de registro de tarefa" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/tela_visualizacao_calendario.png" width="48%" alt="Painel de tarefas do dia com meta" />
+  <img src="docs/screenshots/tela_timesheet_01_calendario.png" width="48%" alt="Timesheet em visão semanal" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/tela_timesheet_02_calendario.png" width="48%" alt="Timesheet em visão mensal" />
+</p>
 
 ## Sobre o projeto
 

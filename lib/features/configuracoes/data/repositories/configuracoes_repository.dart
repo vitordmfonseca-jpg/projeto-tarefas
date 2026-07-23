@@ -8,25 +8,11 @@ class ConfiguracoesRepository implements IConfiguracoesRepository {
 
   ConfiguracoesRepository(this._datasource);
 
-  // Converte int salvo no banco para AppThemeMode
-  AppThemeMode _toAppThemeMode(int value) => switch (value) {
-    1 => AppThemeMode.claro,
-    2 => AppThemeMode.escuro,
-    _ => AppThemeMode.sistema,
-  };
-
-  // Converte AppThemeMode para int para salvar no banco
-  int _fromAppThemeMode(AppThemeMode mode) => switch (mode) {
-    AppThemeMode.claro => 1,
-    AppThemeMode.escuro => 2,
-    AppThemeMode.sistema => 0,
-  };
-
   @override
   Future<ConfiguracoesEntity> carregar() async {
     final data = await _datasource.carregar();
     return ConfiguracoesEntity(
-      themeMode: _toAppThemeMode(data['themeMode'] as int),
+      themeMode: AppThemeMode.fromInt(data['themeMode'] as int),
       metaHoras: data['metaHoras'] as int,
       metaMinutos: data['metaMinutos'] as int,
     );
@@ -35,7 +21,7 @@ class ConfiguracoesRepository implements IConfiguracoesRepository {
   @override
   Future<void> salvar(ConfiguracoesEntity configuracoes) async {
     await _datasource.salvar(
-      themeMode: _fromAppThemeMode(configuracoes.themeMode),
+      themeMode: configuracoes.themeMode.codigo,
       metaHoras: configuracoes.metaHoras,
       metaMinutos: configuracoes.metaMinutos,
     );

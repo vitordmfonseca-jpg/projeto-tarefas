@@ -20,14 +20,12 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
   ConfiguracoesViewModel get _vm => widget.viewModel;
   ConfiguracoesAction get _action => widget.action;
 
-  late final TextEditingController _horasCtrl;
-  late final TextEditingController _minutosCtrl;
+  final _horasCtrl = TextEditingController();
+  final _minutosCtrl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _horasCtrl = TextEditingController();
-    _minutosCtrl = TextEditingController();
     _init();
   }
 
@@ -67,7 +65,6 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
               ),
               const SizedBox(height: 32),
 
-              // Seção Aparência
               _SecaoWidget(titulo: 'Aparência'),
               const SizedBox(height: 16),
               _CartaoWidget(
@@ -97,7 +94,6 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
               const SizedBox(height: 32),
 
-              // Seção Produtividade
               _SecaoWidget(titulo: 'Produtividade'),
               const SizedBox(height: 16),
               _CardMetaWidget(
@@ -112,7 +108,6 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
               const SizedBox(height: 32),
 
-              // Seção Dados
               _SecaoWidget(titulo: 'Dados'),
               const SizedBox(height: 16),
               _CartaoWidget(

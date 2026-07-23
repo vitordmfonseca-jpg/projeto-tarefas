@@ -36,8 +36,7 @@ class ConfiguracoesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Conversão entre o enum de domínio (AppThemeMode) e o ThemeMode do Flutter,
-  // que só a camada de apresentação deve conhecer.
+  // Conversão entre o enum de domínio (AppThemeMode) e o ThemeMode
   ThemeMode _paraThemeMode(AppThemeMode modo) => switch (modo) {
     AppThemeMode.claro => ThemeMode.light,
     AppThemeMode.escuro => ThemeMode.dark,
@@ -69,7 +68,9 @@ class ConfiguracoesViewModel extends ChangeNotifier {
 
   Future<bool> salvarTema(ThemeMode modo) async {
     final anterior = _configuracoes;
-    _configuracoes = _configuracoes.copyWith(themeMode: _paraAppThemeMode(modo));
+    _configuracoes = _configuracoes.copyWith(
+      themeMode: _paraAppThemeMode(modo),
+    );
     temaNotifier.value = modo;
     notifyListeners();
 
