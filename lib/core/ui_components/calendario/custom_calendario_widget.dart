@@ -53,7 +53,10 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
                   '${_viewModel.mesAtual.formataMesPt().toUpperCase()} - ${_viewModel.mesAtual.year}',
               onMesAnterior: () {
                 _viewModel.mesAnterior();
-                widget.onMesAlterado?.call(_mesAtual.month, _mesAtual.year);
+                widget.onMesAlterado?.call(
+                  _viewModel.mesAtual.month,
+                  _viewModel.mesAtual.year,
+                );
               },
               onHoje: () {
                 _viewModel.irParaHoje();
@@ -62,7 +65,10 @@ class _CustomCalendarioWidgetState extends State<CustomCalendarioWidget> {
               },
               onProxMes: () {
                 _viewModel.proxMes();
-                widget.onMesAlterado?.call(_mesAtual.month, _mesAtual.year);
+                widget.onMesAlterado?.call(
+                  _viewModel.mesAtual.month,
+                  _viewModel.mesAtual.year,
+                );
               },
             ),
             Expanded(
@@ -181,10 +187,7 @@ class _CalendarioHeaderWidget extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: onHoje,
-                icon: Icon(
-                  Icons.today_outlined,
-                  color: colorScheme.onPrimary,
-                ),
+                icon: Icon(Icons.today_outlined, color: colorScheme.onPrimary),
                 tooltip: 'Hoje',
               ),
               IconButton(
